@@ -7,7 +7,7 @@ import java.util.Properties;
  */
 public class BiPollerServer {
 
-    //The connection to the database
+    // The connection to the database
     private Connection conn;
 
     // The database config file path.
@@ -66,16 +66,14 @@ public class BiPollerServer {
     }
 
     /**
-     * just returns the connection
-     * @return: returns class level connection
+     * The underlying database connection this server holds.
      */
     public Connection getConnection() {
         return conn;
     }
 
     /**
-     * When your database program exits
-     * you should close the connection
+     * Closes the connection.
      */
     public void closeConnection() {
         try {
@@ -85,12 +83,20 @@ public class BiPollerServer {
         }
     }
 
+    /**
+     * Runs the server, connecting and immediately disconnecting from the server.
+     * @param args Command-line arguments (unused)
+     */
     public static void main(String[] args) {
         BiPollerServer server = new BiPollerServer();
         server.createConnectionFromConfig();
         server.closeConnection();
     }
 
+    /**
+     * Prints an error message and exits with a non-zero exit code.
+     * @param message A message describing the error.
+     */
     private static void error(String message) {
         System.out.println("error: " + message);
         System.exit(-1);
