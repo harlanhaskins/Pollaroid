@@ -1,4 +1,19 @@
 *.class
+.DS_Store
+.idea/
+*.iml
+
+database.cfg
+
+# Eclipse files
+.settings/
+bin/
+build/
+.classpath
+.project
+
+# Java Diagnostic logs
+hs_err_pid*
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
