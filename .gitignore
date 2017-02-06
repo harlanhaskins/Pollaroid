@@ -1,4 +1,9 @@
 *.class
+.DS_Store
+.idea/
+*.iml
+
+database.cfg
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
