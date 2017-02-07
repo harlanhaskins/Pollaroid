@@ -1,0 +1,47 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+
+def dropwizardVersion = '1.0.5'
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    compile (
+       'com.yammer.dropwizard:dropwizard-core:' + dropwizardVersion,
+       'com.yammer.dropwizard:dropwizard-hibernate:' + dropwizardVersion,
+       'com.yammer.dropwizard:dropwizard-migrations:' + dropwizardVersion,
+       'com.yammer.dropwizard:dropwizard-auth:' + dropwizardVersion,
+       'com.h2database:h2:1.3.168'
+    )
+    
+    testCompile (
+    	'junit:junit:4.12'
+	)
+}
+
+buildscript {
+	repositories {
+	    jcenter()
+   		mavenCentral()
+   		
+		maven {
+			url 'https://plugins.gradle.org/m2/'
+		}
+	}
+}
+
+run {
+    args 'server'
+}
+
+jacocoTestReport {
+    group = "Reporting"
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.destination "${buildDir}/reports/coverage"
+    }
+}
