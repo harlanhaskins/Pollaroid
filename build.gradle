@@ -3,7 +3,7 @@ apply plugin: 'jacoco'
 apply plugin: 'application'
 
 def dropwizardVersion = '1.0.5'
-def mainClass = 'com.bipoller.BiPollerServer'
+mainClassName = 'com.bipoller.BiPollerServer'
 
 repositories {
     jcenter()
@@ -33,11 +33,6 @@ buildscript {
 			url 'https://plugins.gradle.org/m2/'
 		}
 	}
-}
-
-run {
-    args 'server'
-    main mainClass
 }
 
 jacocoTestReport {
