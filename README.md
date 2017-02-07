@@ -1,4 +1,5 @@
 # BiPoller
+[![CircleCI](https://circleci.com/gh/harlanhaskins/BiPoller.svg?style=svg&circle-token=e813a3ac50a90a344f7601d537115f954efa34f6)](https://circleci.com/gh/harlanhaskins/BiPoller)
 
 | Leader | Design Engineer | Test Engineer | UI Engineer |
 |--------|-----------------|---------------|-------------|
