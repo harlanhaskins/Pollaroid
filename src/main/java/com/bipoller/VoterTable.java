@@ -1,7 +1,6 @@
 package com.bipoller;
 
 import com.bipoller.objects.District;
-import com.bipoller.objects.Poll;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -12,14 +11,14 @@ import java.util.ArrayList;
 /**
  * Created by lshadler on 3/27/17.
  */
-public class DistrictTable {
-    public DistrictTable() {
+public class VoterTable {
+    public VoterTable() {
     }
 
 
-    public static void createDistrictTable(Connection conn) {
+    public static void createVoterTable(Connection conn) {
         try {
-            String e = "CREATE TABLE IF NOT EXISTS district(ID INT PRIMARY KEY,DISTRICTNO INT, STATE VARCHAR (255), BOOLEAN SENATE);";
+            String e = "CREATE TABLE IF NOT EXISTS voter(ID INT PRIMARY KEY, NAME VARCHAR(255), HOUSE_DISTRICT INT, SENATE_DISTRICT INT, PHONE VARCHAR(13), ADDRESS VARCHAR(255), EMAIL VARCHAR(255), PASS_HASH VARCHAR(255), PASH_SALT VARCHAR(255), DISTRICT_REPRESENTING INT";
             Statement stmt = conn.createStatement();
             stmt.execute(e);
         } catch (SQLException var3) {
@@ -28,8 +27,8 @@ public class DistrictTable {
 
     }
 
-    public static void addDistrict(Connection conn, int id, int dNo, String state, boolean isSenate) {
-        String query = String.format("INSERT INTO district VALUES(%d,\'%d,\'%s,\'%s);", new Object[]{Integer.valueOf(id), Integer.valueOf(dNo),state, Boolean.valueOf(isSenate)});
+    public static void addVoter(Connection conn, int id, String name, int h_dist, int s_dist, String phone, String addr, String email, String passH, String passS, int repping){
+        String query = String.format("INSERT INTO district VALUES(%d,\'%s,\'%d,\'%d,\'%s,\'%s,\'%s,\'%s,\'%s,\'%s,\'%d);", new Object[]{Integer.valueOf(id),name,h_dist,s_dist,phone,addr,email,passH,passS,repping});
 
         try {
             Statement e = conn.createStatement();
@@ -41,24 +40,7 @@ public class DistrictTable {
     }
 
 
-    public static String createDistrictInsertSQL(ArrayList<District> districts) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("INSERT INTO district (id, FIRST_NAME, LAST_NAME, MI) VALUES");
-
-        for(int i = 0; i < districts.size(); ++i) {
-            District p = (District)districts.get(i);
-            sb.append(String.format("(%d,\'%d\',\'%s\',\'%s\')", new Object[]{Integer.valueOf(p.getId()), p.getDistrictNo(),p.getState(),p.isSenate()}));
-            if(i != districts.size() - 1) {
-                sb.append(",");
-            } else {
-                sb.append(";");
-            }
-        }
-
-        return sb.toString();
-    }
-
-    public static ResultSet queryDistrictTable(Connection conn, ArrayList<String> columns, ArrayList<String> whereClauses) {
+    public static ResultSet queryVoterTable(Connection conn, ArrayList<String> columns, ArrayList<String> whereClauses) {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT ");
         int e;
@@ -74,7 +56,7 @@ public class DistrictTable {
             }
         }
 
-        sb.append("FROM district ");
+        sb.append("FROM voter ");
         if(!whereClauses.isEmpty()) {
             sb.append("WHERE ");
 
@@ -99,7 +81,7 @@ public class DistrictTable {
         }
     }
 
-    public static void printDistrictTable(Connection conn) {
+    public static void printVoterTable(Connection conn) {
         String query = "SELECT * FROM district;";
 
         try {
@@ -107,10 +89,7 @@ public class DistrictTable {
             ResultSet result = e.executeQuery(query);
 
             while(result.next()) {
-                System.out.printf("District %d: %d %s %s \n", new Object[]{Integer.valueOf(result.getInt(1)),
-                                                                           Integer.valueOf(result.getInt(2)),
-                                                                                           result.getString(3),
-                                                                                           result.getBoolean(4)});
+                System.out.printf("Voter %d: %s %s \n", new Object[]{Integer.valueOf(result.getInt(1)),result.getString(2),result.getString(5)});
             }
         } catch (SQLException var4) {
             var4.printStackTrace();
