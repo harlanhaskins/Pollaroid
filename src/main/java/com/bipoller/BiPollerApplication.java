@@ -1,4 +1,9 @@
 package com.bipoller;
+import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+import org.joda.time.DateTimeZone;
+
 import java.io.*;
 import java.sql.*;
 import java.util.Properties;
@@ -6,7 +11,7 @@ import java.util.Properties;
 /**
  * Runs the main BiPoller server that connects to the database.
  */
-public class BiPollerServer {
+public class BiPollerApplication extends Application<BiPollerConfiguration> {
 
     // The connection to the database
     private Connection conn;
@@ -84,13 +89,24 @@ public class BiPollerServer {
         }
     }
 
+    @Override
+    public void run(BiPollerConfiguration configuration, Environment environment) throws Exception {
+
+    }
+
+    @Override
+    public void initialize(Bootstrap<BiPollerConfiguration> oauth2ConfigurationBootstrap) {
+        DateTimeZone.setDefault(DateTimeZone.UTC);
+    }
+
     /**
      * Runs the server, connecting and immediately disconnecting from the server.
      * @param args Command-line arguments (unused)
      */
-    public static void main(String[] args) {
-        BiPollerServer server = new BiPollerServer();
+    public static void main(String[] args) throws Exception {
+        BiPollerApplication server = new BiPollerApplication();
         server.createConnectionFromConfig();
+        server.run(args);
         server.closeConnection();
     }
 

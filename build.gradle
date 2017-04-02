@@ -1,9 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'application'
+apply plugin: 'idea'
 
 def dropwizardVersion = '1.0.5'
-mainClassName = 'com.bipoller.BiPollerServer'
+mainClassName = 'com.bipoller.BiPollerApplication'
 
 repositories {
     jcenter()
@@ -16,6 +17,8 @@ dependencies {
        'io.dropwizard:dropwizard-hibernate:' + dropwizardVersion,
        'io.dropwizard:dropwizard-migrations:' + dropwizardVersion,
        'io.dropwizard:dropwizard-auth:' + dropwizardVersion,
+       'in.hiaust:unitedstates:1.0',
+       'org.mindrot:jbcrypt:0.4',
        'com.h2database:h2:1.3.168'
     )
     
