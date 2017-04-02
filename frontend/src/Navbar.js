@@ -1,23 +1,35 @@
 import React from 'react';
-import { Nav, Navbar, NavDropdown, NavItem, MenuItem } from 'react-bootstrap';
+import { Nav, Navbar } from 'react-bootstrap';
+import {
+  Route,
+  Link
+} from 'react-router-dom';
 
-export default (
-  <Navbar inverse collapseOnSelect fixedTop>
+const BootstrapLink = ({ label, to, activeOnlyWhenExact }) => (
+  <Route path={to} exact={activeOnlyWhenExact} children={({ match }) => (
+    <li className={match ? 'active' : ''}>
+      <Link to={to}>{label}</Link>
+    </li>
+  )} />
+);
+
+export default () => {
+  return <Navbar inverse collapseOnSelect fixedTop>
     <Navbar.Header>
       <Navbar.Brand>
-        <a href="/">BiPoller</a>
+        <Link to='/'>BiPoller</Link>
       </Navbar.Brand>
       <Navbar.Toggle />
     </Navbar.Header>
     <Navbar.Collapse>
       <Nav>
-        <NavItem eventKey={1} href="#">Vote</NavItem>
-        <NavItem eventKey={2} href="#">Explore</NavItem>
+        <BootstrapLink to='/vote' label='Vote' />
+        <BootstrapLink to='/explore'label='Explore' />
       </Nav>
       <Nav pullRight>
-        <NavItem eventKey={1} href="#">Sign up</NavItem>
-        <NavItem eventKey={2} href="#">Log In</NavItem>
+        <BootstrapLink to='/signup' label='Sign Up' />
+        <BootstrapLink to='/login' label='Log In' />
       </Nav>
     </Navbar.Collapse>
-  </Navbar>
-);
+  </Navbar>;
+};
