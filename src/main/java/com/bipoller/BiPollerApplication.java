@@ -1,4 +1,5 @@
 package com.bipoller;
+import com.bipoller.resources.*;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -104,6 +105,7 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
         System.out.println("created House with ID: " + house.getId());
         System.out.println("created Senate with ID: " + senate.getId());
         environment.jersey().register(new SignUpResource(getConnection()));
+        environment.jersey().register(new UserResource(getConnection()));
     }
 
     @Override

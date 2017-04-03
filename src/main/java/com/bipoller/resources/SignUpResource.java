@@ -1,4 +1,6 @@
-package com.bipoller;
+package com.bipoller.resources;
+import com.bipoller.District;
+import com.bipoller.Voter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.jersey.params.LongParam;
 
@@ -13,9 +15,9 @@ import java.util.Optional;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SignUpResource {
-    Connection connection;
+    private Connection connection;
 
-    SignUpResource(Connection connection) {
+    public SignUpResource(Connection connection) {
         this.connection = connection;
     }
 

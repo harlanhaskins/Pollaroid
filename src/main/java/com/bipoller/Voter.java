@@ -1,6 +1,8 @@
 package com.bipoller;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -110,5 +112,21 @@ public class Voter {
         } else {
             throw new SQLException("Voter with id " + id + " not found");
         }
+    }
+
+    /**
+     * Gets a list of all voters.
+     * @param conn The connection to the database.
+     * @return A list of all voters in the database.
+     * @throws SQLException
+     */
+    public static List<Voter> all(Connection conn) throws SQLException {
+        PreparedStatement stmt = Utils.prepareStatementFromFile(conn, "sql/all_voters.sql");
+        ResultSet results = stmt.executeQuery();
+        ArrayList<Voter> voters = new ArrayList<>();
+        while (results.next()) {
+            voters.add(new Voter(conn, results));
+        }
+        return voters;
     }
 }
