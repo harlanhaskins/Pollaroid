@@ -2,8 +2,7 @@
   "extends": ["standard", "standard-react"],
   "globals": {
     "$": true,
-    "jQuery": true,
-    "tinymce": true
+    "jQuery": true
   },
   "rules": {
     "comma-dangle": ["error", {
