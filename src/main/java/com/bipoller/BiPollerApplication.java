@@ -1,6 +1,7 @@
 package com.bipoller;
 import com.bipoller.resources.*;
 import io.dropwizard.Application;
+import io.dropwizard.bundles.assets.ConfiguredAssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.joda.time.DateTimeZone;
@@ -104,12 +105,15 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
                                           CongressionalBody.SENATE);
         System.out.println("created House with ID: " + house.getId());
         System.out.println("created Senate with ID: " + senate.getId());
+        environment.jersey().setUrlPattern("/api/*");
         environment.jersey().register(new SignUpResource(getConnection()));
         environment.jersey().register(new UserResource(getConnection()));
     }
 
     @Override
     public void initialize(Bootstrap<BiPollerConfiguration> oauth2ConfigurationBootstrap) {
+        // this resourcePath is actually ignored - refer to bipoller.yml
+        oauth2ConfigurationBootstrap.addBundle(new ConfiguredAssetsBundle("/frontend/build/", "/", "index.html"));
         DateTimeZone.setDefault(DateTimeZone.UTC);
     }
 
