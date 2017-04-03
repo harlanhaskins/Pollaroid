@@ -1,4 +1,11 @@
 package com.bipoller;
+import com.bipoller.resources.*;
+import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+import org.joda.time.DateTimeZone;
+import unitedstates.US;
+
 import java.io.*;
 import java.sql.*;
 import java.util.Properties;
@@ -6,7 +13,7 @@ import java.util.Properties;
 /**
  * Runs the main BiPoller server that connects to the database.
  */
-public class BiPollerServer {
+public class BiPollerApplication extends Application<BiPollerConfiguration> {
 
     // The connection to the database
     private Connection conn;
@@ -84,14 +91,36 @@ public class BiPollerServer {
         }
     }
 
+    @Override
+    public void run(BiPollerConfiguration configuration, Environment environment) throws Exception {
+        Utils.dropEverything(getConnection());
+        District.createTable(getConnection());
+        Voter.createTable(getConnection());
+        District house = District.create(getConnection(), 1,
+                                         US.NEW_YORK,
+                                         CongressionalBody.HOUSE);
+        District senate = District.create(getConnection(), 2,
+                                          US.NEW_YORK,
+                                          CongressionalBody.SENATE);
+        System.out.println("created House with ID: " + house.getId());
+        System.out.println("created Senate with ID: " + senate.getId());
+        environment.jersey().register(new SignUpResource(getConnection()));
+        environment.jersey().register(new UserResource(getConnection()));
+    }
+
+    @Override
+    public void initialize(Bootstrap<BiPollerConfiguration> oauth2ConfigurationBootstrap) {
+        DateTimeZone.setDefault(DateTimeZone.UTC);
+    }
+
     /**
      * Runs the server, connecting and immediately disconnecting from the server.
      * @param args Command-line arguments (unused)
      */
-    public static void main(String[] args) {
-        BiPollerServer server = new BiPollerServer();
+    public static void main(String[] args) throws Exception {
+        BiPollerApplication server = new BiPollerApplication();
         server.createConnectionFromConfig();
-        server.closeConnection();
+        server.run(args);
     }
 
     /**
