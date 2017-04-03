@@ -1,5 +1,6 @@
 package com.bipoller;
 
+import java.security.Principal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mindrot.jbcrypt.BCrypt;
 
-public class Voter {
+public class Voter implements Principal {
     private long id;
     private String name;
     private District houseDistrict;
@@ -26,7 +27,7 @@ public class Voter {
         return id;
     }
 
-    public String getName() {
+    @Override public String getName() {
         return name;
     }
 

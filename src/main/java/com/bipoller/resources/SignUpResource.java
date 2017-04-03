@@ -4,6 +4,8 @@ import com.bipoller.Voter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.jersey.params.LongParam;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -22,18 +24,32 @@ public class SignUpResource {
     }
 
     public static class APIVoter {
+        @NotNull
         public String name;
+
+        @NotNull
         public String password;
+
+        @NotNull
         public String email;
+
+        @NotNull
         public String phoneNumber;
+
+        @NotNull
         public String address;
+
+        @NotNull
         public Long houseDistrictID;
+
+        @NotNull
         public Long senateDistrictID;
+
         public Long representedDistrictID;
     }
 
     @POST
-    public Voter signUp(APIVoter voter) {
+    public Voter signUp(@Valid APIVoter voter) {
         try {
             District house = District.getById(connection, voter.houseDistrictID).get();
             District senate = District.getById(connection, voter.senateDistrictID).get();
