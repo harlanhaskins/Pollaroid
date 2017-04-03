@@ -6,7 +6,7 @@ import java.util.Optional;
  * Created by harlan on 4/1/17.
  */
 public class PollOption {
-    private Optional<Long> id;
+    private Long id;
     private Poll poll;
     private String text;
 

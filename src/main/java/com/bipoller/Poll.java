@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class Poll {
-    private Optional<Long> id;
+    private long id;
     private District district;
     private String title;
 

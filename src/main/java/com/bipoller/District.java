@@ -2,6 +2,7 @@ package com.bipoller;
 
 import unitedstates.US;
 
+import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,46 +15,33 @@ enum CongressionalBody {
 }
 
 public class District {
-    private Optional<Long> id;
+    private long id;
     private int number;
     private US state;
     private CongressionalBody congressionalBody;
 
     public District(ResultSet r) throws SQLException {
-        this.id = Optional.of(r.getLong(1));
-        this.number = r.getInt(2);
+        this.id = r.getLong("id");
+        this.number = r.getInt("district_num");
+        this.state = US.parse(r.getString("state"));
+        this.congressionalBody = r.getBoolean("is_senate") ?
+                CongressionalBody.HOUSE : CongressionalBody.SENATE;
     }
 
-    public Optional<Long> getId() {
+    public long getId() {
         return id;
-    }
-
-    public void setId(Optional<Long> id) {
-        this.id = id;
     }
 
     public int getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
     public US getState() {
         return state;
     }
 
-    public void setState(US state) {
-        this.state = state;
-    }
-
     public CongressionalBody getCongressionalBody() {
         return congressionalBody;
-    }
-
-    public void setCongressionalBody(CongressionalBody congressionalBody) {
-        this.congressionalBody = congressionalBody;
     }
 
     boolean isSenate() {
@@ -65,18 +53,32 @@ public class District {
     }
 
     public static District getById(Connection conn, long id) throws SQLException {
-        String sql = "select * from district where id = ?";
+        String sql = "select * from district where id = ?;";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setLong(1, id);
         ResultSet r = stmt.executeQuery();
-        return new District(r);
+        if (r.next()) {
+            return new District(r);
+        } else {
+            throw new SQLException("District with id " + id + " not found");
+        }
     }
 
-    public static District create(Connection conn, int number, CongressionalBody body) throws SQLException {
+    public static void createTable(Connection connection) throws SQLException {
+        PreparedStatement stmt = Utils.prepareStatementFromFile(connection, "sql/create_district_table.sql");
+        stmt.execute();
+    }
+
+    public static District create(Connection conn, int number, US state, CongressionalBody body) throws SQLException {
         PreparedStatement stmt = Utils.prepareStatementFromFile(conn, "sql/insert_district.sql");
+        stmt.setInt(1, number);
+        stmt.setString(2, "NY" /* TODO: Fix */);
+        stmt.setBoolean(3, body == CongressionalBody.SENATE);
         stmt.executeUpdate();
-        if (stmt.getGeneratedKeys().next()) {
-            return District.getById(conn, stmt.getGeneratedKeys().getLong(1));
+        ResultSet keys = stmt.getGeneratedKeys();
+        if (keys.next()) {
+            long id = keys.getLong(1);
+            return District.getById(conn, id);
         } else {
             throw new SQLException("District insert did not return an ID");
         }

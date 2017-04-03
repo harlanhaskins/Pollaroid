@@ -3,6 +3,7 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.joda.time.DateTimeZone;
+import unitedstates.US;
 
 import java.io.*;
 import java.sql.*;
@@ -91,7 +92,18 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
 
     @Override
     public void run(BiPollerConfiguration configuration, Environment environment) throws Exception {
-
+        Utils.dropEverything(getConnection());
+        District.createTable(getConnection());
+        Voter.createTable(getConnection());
+        District house = District.create(getConnection(), 1,
+                                         US.NEW_YORK,
+                                         CongressionalBody.HOUSE);
+        District senate = District.create(getConnection(), 2,
+                                          US.NEW_YORK,
+                                          CongressionalBody.SENATE);
+        System.out.println("created House with ID: " + house.getId());
+        System.out.println("created Senate with ID: " + senate.getId());
+        environment.jersey().register(new SignUpResource(getConnection()));
     }
 
     @Override
@@ -107,7 +119,6 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
         BiPollerApplication server = new BiPollerApplication();
         server.createConnectionFromConfig();
         server.run(args);
-        server.closeConnection();
     }
 
     /**

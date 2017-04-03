@@ -1,5 +1,5 @@
-create table district
-   (id int primary key auto_increment,
+create table if not exists district
+   (id bigint primary key auto_increment,
     state varchar(2) not null,
-    body varchar(6) not null,
+    district_num int not null,
     is_senate boolean);

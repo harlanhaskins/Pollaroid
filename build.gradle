@@ -2,9 +2,21 @@ apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'application'
 apply plugin: 'idea'
+apply plugin: 'gradle-one-jar'
 
 def dropwizardVersion = '1.0.5'
 mainClassName = 'com.bipoller.BiPollerApplication'
+
+// Add Gradle OneJar Plugin, see https://github.com/rholder/gradle-one-jar
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.github.rholder:gradle-one-jar:1.0.3'
+    }
+}
 
 repositories {
     jcenter()
@@ -34,4 +46,22 @@ jacocoTestReport {
         csv.enabled false
         html.destination "${buildDir}/reports/coverage"
     }
+}
+// Configure the oneJar task
+task oneJar(type: OneJar) {
+    mainClass = mainClassName
+}
+
+// Configure the run task to start the Dropwizard service
+run {
+    args 'server', './src/dist/config/bipoller.yml'
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.4'
+}
+
+artifacts {
+    oneJar
 }

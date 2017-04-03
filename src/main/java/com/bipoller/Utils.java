@@ -19,11 +19,15 @@ public class Utils {
     public static PreparedStatement prepareStatementFromFile(Connection conn, String path) throws SQLException {
         try {
             String sql = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
-            return conn.prepareStatement(path);
+            return conn.prepareStatement(sql);
         } catch (IOException e) {
             System.err.println("Could not find file at " + path + ", aborting...");
             System.exit(-1);
             return null; // Thanks, Java...
         }
+    }
+
+    public static void dropEverything(Connection conn) throws SQLException {
+        conn.prepareStatement("drop all objects;").execute();
     }
 }
