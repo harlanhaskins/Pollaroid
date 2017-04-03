@@ -1,7 +1,6 @@
 assets:
   overrides:
     /: frontend/build/
-bearerRealm: bipoller
-allowedGrantTypes:
-  - password
 
+logging:
+  level: INFO

@@ -94,7 +94,7 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
 
     @Override
     public void run(BiPollerConfiguration configuration, Environment environment) throws Exception {
-        Utils.dropEverything(getConnection());
+        SQLUtils.dropEverything(getConnection());
         District.createTable(getConnection());
         Voter.createTable(getConnection());
         District house = District.create(getConnection(), 1,
@@ -106,14 +106,15 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
         System.out.println("created House with ID: " + house.getId());
         System.out.println("created Senate with ID: " + senate.getId());
         environment.jersey().setUrlPattern("/api/*");
+        environment.jersey().register(new AuthResource(getConnection()));
         environment.jersey().register(new SignUpResource(getConnection()));
         environment.jersey().register(new UserResource(getConnection()));
     }
 
     @Override
-    public void initialize(Bootstrap<BiPollerConfiguration> oauth2ConfigurationBootstrap) {
+    public void initialize(Bootstrap<BiPollerConfiguration> bootstrap) {
         // this resourcePath is actually ignored - refer to bipoller.yml
-        oauth2ConfigurationBootstrap.addBundle(new ConfiguredAssetsBundle("/frontend/build/", "/", "index.html"));
+        bootstrap.addBundle(new ConfiguredAssetsBundle("/frontend/build/", "/", "index.html"));
         DateTimeZone.setDefault(DateTimeZone.UTC);
     }
 

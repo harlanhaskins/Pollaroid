@@ -35,11 +35,11 @@ public class SignUpResource {
     @POST
     public Voter signUp(APIVoter voter) {
         try {
-            District house = District.getById(connection, voter.houseDistrictID);
-            District senate = District.getById(connection, voter.senateDistrictID);
+            District house = District.getById(connection, voter.houseDistrictID).get();
+            District senate = District.getById(connection, voter.senateDistrictID).get();
             District represented = null;
             if (voter.representedDistrictID != null) {
-                represented = District.getById(connection, voter.representedDistrictID);
+                represented = District.getById(connection, voter.representedDistrictID).get();
             }
             Voter v = Voter.create(connection, voter.name, voter.password,
                     house, senate, voter.phoneNumber,

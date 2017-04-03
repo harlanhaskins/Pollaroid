@@ -63,23 +63,23 @@ public class Voter {
         this.name = r.getString("name");
         this.passwordHash = r.getString("password_hash");
         long houseDistrictID = r.getLong("house_district_id");
-        this.houseDistrict = District.getById(conn, houseDistrictID);
+        this.houseDistrict = District.getById(conn, houseDistrictID).get(); // TODO: Make this safe.
         long senateDistrictID = r.getLong("senate_district_id");
-        this.senateDistrict = District.getById(conn, senateDistrictID);
+        this.senateDistrict = District.getById(conn, senateDistrictID).get(); // TODO: Make this safe.
         this.phoneNumber = r.getString("phone_number");
         this.address = r.getString("address");
         this.email = r.getString("email");
     }
 
     public static void createTable(Connection connection) throws SQLException {
-        PreparedStatement stmt = Utils.prepareStatementFromFile(connection, "sql/create_voter_table.sql");
+        PreparedStatement stmt = SQLUtils.prepareStatementFromFile(connection, "sql/create_voter_table.sql");
         stmt.execute();
     }
 
     public static Voter create(Connection conn, String name, String password, District houseDistrict,
                                District senateDistrict, String phoneNumber, String address, String email,
                                Optional<District> representedDistrict) throws SQLException {
-        PreparedStatement stmt = Utils.prepareStatementFromFile(conn, "sql/insert_voter.sql");
+        PreparedStatement stmt = SQLUtils.prepareStatementFromFile(conn, "sql/insert_voter.sql");
         stmt.setString(1, name);
         String hash = BCrypt.hashpw(password, BCrypt.gensalt());
         stmt.setString(2, hash);
@@ -96,22 +96,36 @@ public class Voter {
         stmt.executeUpdate();
         ResultSet keys = stmt.getGeneratedKeys();
         if (keys.next()) {
-            return Voter.getById(conn, keys.getLong(1));
-        } else {
-            throw new SQLException("Voter insert did not return an ID");
+            Optional<Voter> voter = Voter.getById(conn, keys.getLong(1));
+            if (voter.isPresent()) {
+                return voter.get();
+            } else {
+                throw new SQLException("Voter insert ID was invalid");
+            }
         }
+        throw new SQLException("Voter insert did not return an ID");
     }
 
-    public static Voter getById(Connection conn, long id) throws SQLException {
+    public static Optional<Voter> getByEmail(Connection conn, String email) throws SQLException {
+        String sql = "select * from voter where email = ?;";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, email);
+        ResultSet r = stmt.executeQuery();
+        if (r.next()) {
+            return Optional.of(new Voter(conn, r));
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<Voter> getById(Connection conn, long id) throws SQLException {
         String sql = "select * from voter where id = ?;";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setLong(1, id);
         ResultSet r = stmt.executeQuery();
         if (r.next()) {
-            return new Voter(conn, r);
-        } else {
-            throw new SQLException("Voter with id " + id + " not found");
+            return Optional.of(new Voter(conn, r));
         }
+        return Optional.empty();
     }
 
     /**
@@ -121,7 +135,7 @@ public class Voter {
      * @throws SQLException
      */
     public static List<Voter> all(Connection conn) throws SQLException {
-        PreparedStatement stmt = Utils.prepareStatementFromFile(conn, "sql/all_voters.sql");
+        PreparedStatement stmt = SQLUtils.prepareStatementFromFile(conn, "sql/all_voters.sql");
         ResultSet results = stmt.executeQuery();
         ArrayList<Voter> voters = new ArrayList<>();
         while (results.next()) {
