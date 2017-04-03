@@ -2,6 +2,8 @@ package com.bipoller;
 
 import java.sql.*;
 import java.util.Optional;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class Voter {
@@ -12,7 +14,10 @@ public class Voter {
     private String phoneNumber;
     private String address;
     private String email;
+
+    @JsonIgnore // Don't return the password hash when serializing
     private String passwordHash;
+
     private Optional<District> representedDistrict;
 
     public long getId() {

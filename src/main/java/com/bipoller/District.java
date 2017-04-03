@@ -1,5 +1,7 @@
 package com.bipoller;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import unitedstates.US;
 
 import javax.xml.transform.Result;
@@ -18,6 +20,8 @@ public class District {
     private long id;
     private int number;
     private US state;
+
+    @JsonIgnore
     private CongressionalBody congressionalBody;
 
     public District(ResultSet r) throws SQLException {
@@ -44,11 +48,12 @@ public class District {
         return congressionalBody;
     }
 
-    boolean isSenate() {
+    @JsonProperty
+    public boolean isSenate() {
         return congressionalBody == CongressionalBody.SENATE;
     }
 
-    boolean isHouse() {
+    public boolean isHouse() {
         return congressionalBody == CongressionalBody.SENATE;
     }
 
