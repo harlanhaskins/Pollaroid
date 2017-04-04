@@ -110,9 +110,10 @@ Response:
 A GET to `/api/voters` will produce a JSON array of all voters currently registered in the database. This is temporary, and will be removed.
 It requires no parameters, and returns a JSON array of voters.
 
-Example:
+### Example:
 
 Response:
+
 ```json
 [
   {
