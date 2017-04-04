@@ -57,8 +57,7 @@ public class District {
     }
 
     public static Optional<District> getById(Connection conn, long id) throws SQLException {
-        String sql = "select * from district where id = ?;";
-        PreparedStatement stmt = conn.prepareStatement(sql);
+        PreparedStatement stmt = SQLUtils.prepareStatementFromFile(conn, "sql/get_district_by_id.sql");
         stmt.setLong(1, id);
         ResultSet r = stmt.executeQuery();
         if (r.next()) {

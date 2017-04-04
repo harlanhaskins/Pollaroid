@@ -14,7 +14,7 @@ import java.security.Principal;
 import java.util.*;
 
 /**
- * Created by harlan on 4/3/17.
+ * A filter that filters resources based on their requirements for authentication.
  */
 @Priority(Priorities.AUTHENTICATION)
 public class BiPollerAuthFilter extends AuthFilter<UUID, Voter> {

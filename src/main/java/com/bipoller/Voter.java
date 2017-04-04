@@ -64,17 +64,28 @@ public class Voter implements Principal {
         this.name = r.getString("name");
         this.passwordHash = r.getString("password_hash");
         long houseDistrictID = r.getLong("house_district_id");
-        this.houseDistrict = District.getById(conn, houseDistrictID).get(); // TODO: Make this safe.
         long senateDistrictID = r.getLong("senate_district_id");
-        this.senateDistrict = District.getById(conn, senateDistrictID).get(); // TODO: Make this safe.
         this.phoneNumber = r.getString("phone_number");
         this.address = r.getString("address");
         this.email = r.getString("email");
+
+        // Throw a SQLException if we've stored a reference to a district that doesn't exist.
+        // This Shouldn't Happen™
+
+        if (District.getById(conn, houseDistrictID).isPresent()) {
+            this.houseDistrict = District.getById(conn, houseDistrictID).get();
+        } else {
+            throw new SQLException("District with id " + houseDistrictID + " not found");
+        }
+        if (District.getById(conn, senateDistrictID).isPresent()) {
+            this.senateDistrict = District.getById(conn, senateDistrictID).get();
+        } else {
+            throw new SQLException("District with id " + houseDistrictID + " not found");
+        }
     }
 
     public static void createTable(Connection connection) throws SQLException {
-        PreparedStatement stmt = SQLUtils.prepareStatementFromFile(connection, "sql/create_voter_table.sql");
-        stmt.execute();
+        SQLUtils.prepareStatementFromFile(connection, "sql/create_voter_table.sql").execute();
     }
 
     public static Voter create(Connection conn, String name, String password, District houseDistrict,
@@ -108,8 +119,7 @@ public class Voter implements Principal {
     }
 
     public static Optional<Voter> getByEmail(Connection conn, String email) throws SQLException {
-        String sql = "select * from voter where email = ?;";
-        PreparedStatement stmt = conn.prepareStatement(sql);
+        PreparedStatement stmt = SQLUtils.prepareStatementFromFile(conn, "sql/get_voter_by_email.sql");
         stmt.setString(1, email);
         ResultSet r = stmt.executeQuery();
         if (r.next()) {
@@ -119,8 +129,7 @@ public class Voter implements Principal {
     }
 
     public static Optional<Voter> getById(Connection conn, long id) throws SQLException {
-        String sql = "select * from voter where id = ?;";
-        PreparedStatement stmt = conn.prepareStatement(sql);
+        PreparedStatement stmt = SQLUtils.prepareStatementFromFile(conn, "sql/get_voter_by_id.sql");
         stmt.setLong(1, id);
         ResultSet r = stmt.executeQuery();
         if (r.next()) {
