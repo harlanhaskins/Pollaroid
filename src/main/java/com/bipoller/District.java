@@ -54,7 +54,7 @@ public class District {
     }
 
     public boolean isHouse() {
-        return congressionalBody == CongressionalBody.SENATE;
+        return congressionalBody == CongressionalBody.HOUSE;
     }
 
     public static Optional<District> getById(Connection conn, long id) throws SQLException {

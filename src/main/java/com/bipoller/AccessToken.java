@@ -1,5 +1,7 @@
 package com.bipoller;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotNull;
 import java.sql.*;
 import java.time.Duration;
@@ -13,6 +15,7 @@ public final class AccessToken {
     private UUID uuid;
 
     @NotNull
+    @JsonIgnore
     private long voterID;
 
     @NotNull
@@ -51,6 +54,7 @@ public final class AccessToken {
         return expiration;
     }
 
+    @JsonIgnore
     public boolean isExpired() {
         return getExpiration().isBefore(ZonedDateTime.now(ZoneId.of("UTC")));
     }
