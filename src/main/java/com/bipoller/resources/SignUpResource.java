@@ -45,22 +45,21 @@ public class SignUpResource {
         @NotNull
         public Long senateDistrictID;
 
-        public Long representedDistrictID;
+        public Long representingDistrictID;
     }
 
     @POST
     public Voter signUp(@Valid APIVoter voter) {
         try {
-            District house = District.getById(connection, voter.houseDistrictID).get();
-            District senate = District.getById(connection, voter.senateDistrictID).get();
-            District represented = null;
-            if (voter.representedDistrictID != null) {
-                represented = District.getById(connection, voter.representedDistrictID).get();
+            District house = District.getByIdOrThrow(connection, voter.houseDistrictID);
+            District senate = District.getByIdOrThrow(connection, voter.senateDistrictID);
+            Optional<District> represented = Optional.empty();
+            if (voter.representingDistrictID != null) {
+                represented = District.getById(connection, voter.representingDistrictID);
             }
-            Voter v = Voter.create(connection, voter.name, voter.password,
-                    house, senate, voter.phoneNumber,
-                    voter.address, voter.email, Optional.ofNullable(represented));
-            return v;
+            return Voter.create(connection, voter.name, voter.password,
+                                house, senate, voter.phoneNumber,
+                                voter.address, voter.email, represented);
         } catch (SQLException e) {
             Response response =
                     Response.status(Response.Status.INTERNAL_SERVER_ERROR)

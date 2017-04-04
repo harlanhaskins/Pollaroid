@@ -2,6 +2,7 @@ package com.bipoller;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.criterion.Distinct;
 import unitedstates.US;
 
 import java.sql.Connection;
@@ -64,6 +65,14 @@ public class District {
             return Optional.of(new District(r));
         }
         return Optional.empty();
+    }
+
+    public static District getByIdOrThrow(Connection conn, long id) throws SQLException {
+        Optional<District> district = getById(conn, id);
+        if (district.isPresent()) {
+            return district.get();
+        }
+        throw new SQLException("District with id " + id + " not found.");
     }
 
     public static void createTable(Connection connection) throws SQLException {

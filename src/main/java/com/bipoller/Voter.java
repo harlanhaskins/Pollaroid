@@ -21,7 +21,7 @@ public class Voter implements Principal {
     @JsonIgnore // Don't return the password hash when serializing
     private String passwordHash;
 
-    private Optional<District> representedDistrict;
+    private Optional<District> representingDistrict;
 
     public long getId() {
         return id;
@@ -55,8 +55,8 @@ public class Voter implements Principal {
         return passwordHash;
     }
 
-    public Optional<District> getRepresentedDistrict() {
-        return representedDistrict;
+    public Optional<District> getRepresentingDistrict() {
+        return representingDistrict;
     }
 
     public Voter(Connection conn, ResultSet r) throws SQLException {
@@ -72,15 +72,14 @@ public class Voter implements Principal {
         // Throw a SQLException if we've stored a reference to a district that doesn't exist.
         // This Shouldn't Happen™
 
-        if (District.getById(conn, houseDistrictID).isPresent()) {
-            this.houseDistrict = District.getById(conn, houseDistrictID).get();
-        } else {
-            throw new SQLException("District with id " + houseDistrictID + " not found");
-        }
-        if (District.getById(conn, senateDistrictID).isPresent()) {
-            this.senateDistrict = District.getById(conn, senateDistrictID).get();
-        } else {
-            throw new SQLException("District with id " + houseDistrictID + " not found");
+        this.houseDistrict = District.getByIdOrThrow(conn, houseDistrictID);
+        this.senateDistrict = District.getByIdOrThrow(conn, senateDistrictID);
+
+        // Have to get this as an Object and cast.
+
+        Long representingDistrictID = (Long)r.getObject("representing_district_id");
+        if (representingDistrictID != null) {
+            this.representingDistrict = District.getById(conn, representingDistrictID);
         }
     }
 

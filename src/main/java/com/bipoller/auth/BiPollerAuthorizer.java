@@ -14,7 +14,7 @@ public class BiPollerAuthorizer implements Authorizer<Voter> {
             case AuthRoles.VOTER:
                 return true;
             case AuthRoles.REPRESENTATIVE:
-                return !principal.getRepresentedDistrict().isPresent();
+                return !principal.getRepresentingDistrict().isPresent();
             default:
                 return false;
         }
