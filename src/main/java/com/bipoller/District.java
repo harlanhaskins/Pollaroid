@@ -2,14 +2,13 @@ package com.bipoller;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.criterion.Distinct;
 import unitedstates.US;
 
-import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -55,36 +54,46 @@ public class District {
     }
 
     public boolean isHouse() {
-        return congressionalBody == CongressionalBody.SENATE;
+        return congressionalBody == CongressionalBody.HOUSE;
     }
 
-    public static District getById(Connection conn, long id) throws SQLException {
-        String sql = "select * from district where id = ?;";
-        PreparedStatement stmt = conn.prepareStatement(sql);
+    public static Optional<District> getById(Connection conn, long id) throws SQLException {
+        PreparedStatement stmt = SQLUtils.prepareStatementFromFile(conn, "sql/get_district_by_id.sql");
         stmt.setLong(1, id);
         ResultSet r = stmt.executeQuery();
         if (r.next()) {
-            return new District(r);
-        } else {
-            throw new SQLException("District with id " + id + " not found");
+            return Optional.of(new District(r));
         }
+        return Optional.empty();
+    }
+
+    public static District getByIdOrThrow(Connection conn, long id) throws SQLException {
+        Optional<District> district = getById(conn, id);
+        if (district.isPresent()) {
+            return district.get();
+        }
+        throw new SQLException("District with id " + id + " not found.");
     }
 
     public static void createTable(Connection connection) throws SQLException {
-        PreparedStatement stmt = Utils.prepareStatementFromFile(connection, "sql/create_district_table.sql");
+        PreparedStatement stmt = SQLUtils.prepareStatementFromFile(connection, "sql/create_district_table.sql");
         stmt.execute();
     }
 
     public static District create(Connection conn, int number, US state, CongressionalBody body) throws SQLException {
-        PreparedStatement stmt = Utils.prepareStatementFromFile(conn, "sql/insert_district.sql");
+        PreparedStatement stmt = SQLUtils.prepareStatementFromFile(conn, "sql/insert_district.sql");
         stmt.setInt(1, number);
         stmt.setString(2, "NY" /* TODO: Fix */);
         stmt.setBoolean(3, body == CongressionalBody.SENATE);
         stmt.executeUpdate();
         ResultSet keys = stmt.getGeneratedKeys();
         if (keys.next()) {
-            long id = keys.getLong(1);
-            return District.getById(conn, id);
+            Optional<District> district = District.getById(conn, keys.getLong(1));
+            if (district.isPresent()) {
+                return district.get();
+            } else {
+                throw new SQLException("District insert ID was invalid");
+            }
         } else {
             throw new SQLException("District insert did not return an ID");
         }

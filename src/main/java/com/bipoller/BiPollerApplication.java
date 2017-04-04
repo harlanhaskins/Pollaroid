@@ -1,4 +1,8 @@
 package com.bipoller;
+
+import com.bipoller.auth.AuthFeature;
+import com.bipoller.auth.BiPollerAuthFilter;
+import com.bipoller.auth.BiPollerAuthenticator;
 import com.bipoller.resources.*;
 import io.dropwizard.Application;
 import io.dropwizard.bundles.assets.ConfiguredAssetsBundle;
@@ -24,8 +28,9 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
 
     /**
      * Create a database connection with the given params
+     *
      * @param location: path of where to place the database
-     * @param user: user name for the owner of the database
+     * @param user:     user name for the owner of the database
      * @param password: password of the database owner
      */
     public void createConnection(String location,
@@ -52,11 +57,11 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
     /**
      * Creates a connection to the database by reading the database.cfg file in the working directory.
      * The config file must be set up as such:
-     *
+     * <p>
      * location=/path/to/your/location
      * user=your_username
      * password=your_password
-     *
+     * <p>
      * This file will not be tracked in git, as that would be a security vulnerability.
      */
     public void createConnectionFromConfig() {
@@ -70,8 +75,8 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
             error("could not read " + CONFIG_PATH + "file: " + e.getMessage());
         }
         createConnection(dbProperties.getProperty("location"),
-                         dbProperties.getProperty("user"),
-                         dbProperties.getProperty("password"));
+                dbProperties.getProperty("user"),
+                dbProperties.getProperty("password"));
     }
 
     /**
@@ -94,31 +99,40 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
 
     @Override
     public void run(BiPollerConfiguration configuration, Environment environment) throws Exception {
-        Utils.dropEverything(getConnection());
+        SQLUtils.dropEverything(getConnection());
         District.createTable(getConnection());
         Voter.createTable(getConnection());
+        AccessToken.createTable(getConnection());
         District house = District.create(getConnection(), 1,
-                                         US.NEW_YORK,
-                                         CongressionalBody.HOUSE);
+                US.NEW_YORK,
+                CongressionalBody.HOUSE);
         District senate = District.create(getConnection(), 2,
-                                          US.NEW_YORK,
-                                          CongressionalBody.SENATE);
+                US.NEW_YORK,
+                CongressionalBody.SENATE);
         System.out.println("created House with ID: " + house.getId());
         System.out.println("created Senate with ID: " + senate.getId());
         environment.jersey().setUrlPattern("/api/*");
+
+
+        BiPollerAuthenticator authenticator = new BiPollerAuthenticator(getConnection());
+        BiPollerAuthFilter filter = new BiPollerAuthFilter(authenticator);
+        environment.jersey().register(new AuthFeature(filter));
+
+        environment.jersey().register(new AuthResource(authenticator, getConnection()));
         environment.jersey().register(new SignUpResource(getConnection()));
-        environment.jersey().register(new UserResource(getConnection()));
+        environment.jersey().register(new VoterResource(getConnection()));
     }
 
     @Override
-    public void initialize(Bootstrap<BiPollerConfiguration> oauth2ConfigurationBootstrap) {
+    public void initialize(Bootstrap<BiPollerConfiguration> bootstrap) {
         // this resourcePath is actually ignored - refer to bipoller.yml
-        oauth2ConfigurationBootstrap.addBundle(new ConfiguredAssetsBundle("/frontend/build/", "/", "index.html"));
+        bootstrap.addBundle(new ConfiguredAssetsBundle("/frontend/build/", "/", "index.html"));
         DateTimeZone.setDefault(DateTimeZone.UTC);
     }
 
     /**
      * Runs the server, connecting and immediately disconnecting from the server.
+     *
      * @param args Command-line arguments (unused)
      */
     public static void main(String[] args) throws Exception {
@@ -129,6 +143,7 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
 
     /**
      * Prints an error message and exits with a non-zero exit code.
+     *
      * @param message A message describing the error.
      */
     private static void error(String message) {

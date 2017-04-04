@@ -1,0 +1,1 @@
+select * from token where voter_id = ?;

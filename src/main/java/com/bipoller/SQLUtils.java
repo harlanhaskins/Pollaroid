@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Utils {
+public class SQLUtils {
     /**
      * Creates a prepared statement from the SQL query at the provided path.
      * @param conn The connection creating the statement.

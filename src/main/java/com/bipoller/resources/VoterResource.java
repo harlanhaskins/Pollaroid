@@ -1,22 +1,26 @@
 package com.bipoller.resources;
+import com.bipoller.Poll;
 import com.bipoller.Voter;
+import com.bipoller.auth.AuthRoles;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.sql.*;
 import java.util.List;
 
-@Path("/users")
+@Path("/voters")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class UserResource {
+public class VoterResource {
     private Connection connection;
 
-    public UserResource(Connection connection) {
+    public VoterResource(Connection connection) {
         this.connection = connection;
     }
 
     @GET
+    @RolesAllowed(AuthRoles.VOTER)
     public List<Voter> voters() {
         try {
             return Voter.all(connection);

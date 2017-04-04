@@ -1,0 +1,1 @@
+update token set expiration_date = ? where uuid = ?;
