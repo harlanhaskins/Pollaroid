@@ -109,7 +109,7 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
         DistrictDAO districtDAO = new DistrictDAO(getConnection());
         VoterDAO voterDAO = new VoterDAO(getConnection(), districtDAO);
         PollDAO pollDAO = new PollDAO(getConnection(), voterDAO, districtDAO);
-        AccessTokenDAO tokenDAO = new AccessTokenDAO(getConnection());
+        AccessTokenDAO tokenDAO = new AccessTokenDAO(getConnection(), voterDAO);
 
         districtDAO.createTable();
         voterDAO.createTable();
