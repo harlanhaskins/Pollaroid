@@ -33,7 +33,7 @@ public class BiPollerAuthenticator implements Authenticator<UUID, Voter> {
             // If we have an existing token, then extend its lifetime another 2 days.
             accessTokenDAO.extendLifetime(optToken.get());
         } else {
-            optToken = Optional.of(accessTokenDAO.create(voter.getId()));
+            optToken = Optional.of(accessTokenDAO.create(voter));
         }
         return optToken.get();
     }
@@ -45,7 +45,6 @@ public class BiPollerAuthenticator implements Authenticator<UUID, Voter> {
      *
      * @param uuid The UUID of the access token
      * @return A Voter if the UUID is a valid AccessToken.
-     * @throws SQLException If anything failed in the database.
      */
     @Override
     public Optional<Voter> authenticate(UUID uuid) throws AuthenticationException {
@@ -66,7 +65,7 @@ public class BiPollerAuthenticator implements Authenticator<UUID, Voter> {
 
             // Otherwise extend the token's life and return the voter.
             accessTokenDAO.extendLifetime(token);
-            return voterDAO.getById(token.getVoterID());
+            return voterDAO.getById(token.getVoter().getId());
         } catch (SQLException e) {
             //Log error
             return Optional.empty();

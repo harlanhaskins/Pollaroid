@@ -1,6 +1,7 @@
 package com.bipoller.database;
 
 import com.bipoller.models.AccessToken;
+import com.bipoller.models.Voter;
 
 import java.sql.*;
 import java.time.Duration;
@@ -13,8 +14,11 @@ import java.util.UUID;
  * A DAO for working with AccessTokens
  */
 public class AccessTokenDAO extends BiPollerDAO<AccessToken, UUID> {
-    public AccessTokenDAO(Connection connection) {
+    private VoterDAO voterDAO;
+
+    public AccessTokenDAO(Connection connection, VoterDAO voterDAO) {
         super(connection);
+        this.voterDAO = voterDAO;
     }
 
     @Override
@@ -41,8 +45,9 @@ public class AccessTokenDAO extends BiPollerDAO<AccessToken, UUID> {
     public AccessToken createFromResultSet(ResultSet r) throws SQLException {
         String uuidString = r.getString("uuid");
         Timestamp expirationStamp = r.getTimestamp("expiration_date");
+        long voterID = r.getInt("voter_id");
         return new AccessToken(UUID.fromString(uuidString),
-                               r.getInt("voter_id"),
+                               voterDAO.getByIdOrThrow(voterID),
                                ZonedDateTime.ofInstant(expirationStamp.toInstant(),
                                   ZoneId.of("UTC")));
     }
@@ -95,15 +100,15 @@ public class AccessTokenDAO extends BiPollerDAO<AccessToken, UUID> {
         stmt.executeUpdate();
     }
 
-    public AccessToken create(long voterID) throws SQLException {
+    public AccessToken create(Voter voter) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile("sql/insert_token.sql");
         UUID newUUID = UUID.randomUUID();
         ZonedDateTime time = ZonedDateTime.now(ZoneId.of("UTC")).plus(Duration.ofDays(2));
         Timestamp newTimestamp = Timestamp.from(time.toInstant());
         stmt.setString(1, newUUID.toString());
-        stmt.setLong(2, voterID);
+        stmt.setLong(2, voter.getId());
         stmt.setTimestamp(3, newTimestamp);
         stmt.executeUpdate();
-        return new AccessToken(newUUID, voterID, time);
+        return new AccessToken(newUUID, voter, time);
     }
 }

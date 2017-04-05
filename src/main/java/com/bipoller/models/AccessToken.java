@@ -15,7 +15,7 @@ public final class AccessToken {
 
     @NotNull
     @JsonIgnore
-    private long voterID;
+    private Voter voter;
 
     @NotNull
     private ZonedDateTime expiration;
@@ -24,8 +24,8 @@ public final class AccessToken {
         return uuid;
     }
 
-    public long getVoterID() {
-        return voterID;
+    public Voter getVoter() {
+        return voter;
     }
 
     public ZonedDateTime getExpiration() {
