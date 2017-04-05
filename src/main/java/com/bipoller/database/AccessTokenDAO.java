@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * A DAO for working with AccessTokens
+ * A DAO for working with AccessTokens.
  */
 public class AccessTokenDAO extends BiPollerDAO<AccessToken, UUID> {
     private VoterDAO voterDAO;

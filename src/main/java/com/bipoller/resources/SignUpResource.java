@@ -50,10 +50,12 @@ public class SignUpResource {
     @POST
     public Voter signUp(@Valid APIVoter voter) {
         try {
+            District house = districtDAO.getByIdOrThrow(voter.houseDistrictID);
+            District senate = districtDAO.getByIdOrThrow(voter.senateDistrictID);
+            Optional<District> representing = districtDAO.getById(voter.representingDistrictID);
             return voterDAO.create(voter.name, voter.password,
-                                   voter.houseDistrictID, voter.senateDistrictID, voter.phoneNumber,
-                                   voter.address, voter.email,
-                                   Optional.ofNullable(voter.representingDistrictID));
+                                   house, senate, voter.phoneNumber,
+                                   voter.address, voter.email, representing);
         } catch (SQLException e) {
             Response response =
                     Response.status(Response.Status.INTERNAL_SERVER_ERROR)

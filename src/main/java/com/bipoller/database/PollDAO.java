@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Created by harlan on 4/5/17.
+ * A DAO for working with Polls.
  */
 public class PollDAO extends BiPollerDAO<Poll, Long> {
 
@@ -51,6 +51,14 @@ public class PollDAO extends BiPollerDAO<Poll, Long> {
                         r.getString("title"));
     }
 
+    /**
+     * Creates a new Poll in the database with the provided fields.
+     * @param submitter The submitter of the poll.
+     * @param district The district the poll applies to.
+     * @param title The title of the poll.
+     * @return A new Poll if it was created successfully.
+     * @throws SQLException If there was a problem interacting with the database.
+     */
     public Poll create(Voter submitter, District district, String title) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile(getSQLInsertPath());
         stmt.setLong(1, submitter.getId());

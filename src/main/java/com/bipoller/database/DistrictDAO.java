@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * A DAO that traffics in Districts.
+ * A DAO for working with Districts.
  */
 public class DistrictDAO extends BiPollerDAO<District, Long> {
     public DistrictDAO(Connection connection) {
@@ -46,6 +46,14 @@ public class DistrictDAO extends BiPollerDAO<District, Long> {
                                 CongressionalBody.HOUSE : CongressionalBody.SENATE);
     }
 
+    /**
+     * Creates a new District in the database from the constituent parts.
+     * @param number The district's number.
+     * @param state The state the district is located in.
+     * @param body The congressional body of this district.
+     * @return A fully-formed District object, if it was created successfully.
+     * @throws SQLException If the database did not successfully create the district.
+     */
     public District create(int number, US state, CongressionalBody body) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile(getSQLInsertPath());
         stmt.setInt(1, number);

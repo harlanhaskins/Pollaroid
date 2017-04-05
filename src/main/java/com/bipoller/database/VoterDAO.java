@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by harlan on 4/5/17.
+ * A DAO for working with Voters.
  */
 public class VoterDAO extends BiPollerDAO<Voter, Long> {
 
@@ -45,7 +45,6 @@ public class VoterDAO extends BiPollerDAO<Voter, Long> {
         long houseDistrictID  = r.getLong("house_district_id");
         long senateDistrictID = r.getLong("senate_district_id");
 
-
         Optional<District> representingDistrict = Optional.empty();
 
         // Have to get this as an Object and cast.
@@ -67,7 +66,12 @@ public class VoterDAO extends BiPollerDAO<Voter, Long> {
                          representingDistrict);
     }
 
-
+    /**
+     * Gets a specific voter by the provided email, if one exists.
+     * @param email The email you're looking up.
+     * @return A Voter from the Database, if one exists with that email.
+     * @throws SQLException If something went wrong connecting to the database.
+     */
     public Optional<Voter> getByEmail(String email) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile("sql/get_voter_by_email.sql");
         stmt.setString(1, email);
@@ -81,7 +85,7 @@ public class VoterDAO extends BiPollerDAO<Voter, Long> {
     /**
      * Gets a list of all voters.
      * @return A list of all voters in the database.
-     * @throws SQLException
+     * @throws SQLException If anything went wrong while executing the query.
      */
     public List<Voter> all() throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile("sql/all_voters.sql");
@@ -93,23 +97,35 @@ public class VoterDAO extends BiPollerDAO<Voter, Long> {
         return voters;
     }
 
-
-    public Voter create(String name, String password, Long houseDistrictID,
-                        Long senateDistrictID, String phoneNumber, String address, String email,
-                        Optional<Long> representedDistrictID) throws SQLException {
+    /**
+     * Creates a new Voter in the database with the provided fields.
+     * @param name The voter's full name.
+     * @param password The voter's new password. (Will not be stored directly.)
+     * @param houseDistrict The House district this voter will be created in.
+     * @param senateDistrict The Senate district this voter will be created in.
+     * @param phoneNumber The voter's phone number.
+     * @param address The voter's address.
+     * @param email The voter's email.
+     * @param representingDistrict The district this voter represents, or .empty() if this user is not a representative.
+     * @return A fully-formed Voter that's now in the database.
+     * @throws SQLException If anything went wrong talking to the database.
+     */
+    public Voter create(String name, String password, District houseDistrict,
+                        District senateDistrict, String phoneNumber, String address, String email,
+                        Optional<District> representingDistrict) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile(getSQLInsertPath());
 
         stmt.setString(1, name);
         String hash = BCrypt.hashpw(password, BCrypt.gensalt());
         stmt.setString(2, hash);
-        stmt.setLong(3, houseDistrictID);
-        stmt.setLong(4, senateDistrictID);
+        stmt.setLong(3, houseDistrict.getId());
+        stmt.setLong(4, senateDistrict.getId());
         stmt.setString(5, phoneNumber);
         stmt.setString(6, address);
         stmt.setString(7, email);
 
-        if (representedDistrictID.isPresent()) {
-            stmt.setLong(8, representedDistrictID.get());
+        if (representingDistrict.isPresent()) {
+            stmt.setLong(8, representingDistrict.get().getId());
         } else {
             stmt.setNull(8, Types.INTEGER);
         }
