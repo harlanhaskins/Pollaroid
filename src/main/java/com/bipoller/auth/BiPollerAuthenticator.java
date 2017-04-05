@@ -1,11 +1,13 @@
 package com.bipoller.auth;
 
-import com.bipoller.AccessToken;
-import com.bipoller.Voter;
+import com.bipoller.database.AccessTokenDAO;
+import com.bipoller.database.VoterDAO;
+import com.bipoller.models.AccessToken;
+import com.bipoller.models.Voter;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
+import lombok.AllArgsConstructor;
 
-import javax.swing.text.html.Option;
 import java.sql.*;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,12 +16,10 @@ import java.util.UUID;
  * A manager that keeps an in-memory hash map of valid access tokens and provides
  * methods for accessing
  */
+@AllArgsConstructor
 public class BiPollerAuthenticator implements Authenticator<UUID, Voter> {
-    private Connection connection;
-
-    public BiPollerAuthenticator(Connection connection) {
-        this.connection = connection;
-    }
+    private VoterDAO voterDAO;
+    private AccessTokenDAO accessTokenDAO;
 
     /**
      * Gets the access token registered for the provided voter, or creates a new one if it doesn't exist.
@@ -28,12 +28,12 @@ public class BiPollerAuthenticator implements Authenticator<UUID, Voter> {
      * @return A new token that's valid for the provided Voter.
      */
     public AccessToken extendOrCreateToken(Voter voter) throws SQLException {
-        Optional<AccessToken> optToken = AccessToken.getByVoterID(connection, voter.getId());
+        Optional<AccessToken> optToken = accessTokenDAO.getByVoterID(voter.getId());
         if (optToken.isPresent()) {
             // If we have an existing token, then extend its lifetime another 2 days.
-            optToken.get().extendLifetime(connection);
+            accessTokenDAO.extendLifetime(optToken.get());
         } else {
-            optToken = Optional.of(AccessToken.create(connection, voter.getId()));
+            optToken = Optional.of(accessTokenDAO.create(voter.getId()));
         }
         return optToken.get();
     }
@@ -50,7 +50,7 @@ public class BiPollerAuthenticator implements Authenticator<UUID, Voter> {
     @Override
     public Optional<Voter> authenticate(UUID uuid) throws AuthenticationException {
         try {
-            Optional<AccessToken> optToken = AccessToken.getByUUID(connection, uuid);
+            Optional<AccessToken> optToken = accessTokenDAO.getById(uuid);
 
             // Bail if we didn't get a token.
             if (!optToken.isPresent()) {
@@ -60,13 +60,13 @@ public class BiPollerAuthenticator implements Authenticator<UUID, Voter> {
 
             // Bail if the token is expired.
             if (token.isExpired()) {
-                token.delete(connection);
+                accessTokenDAO.delete(token);
                 return Optional.empty();
             }
 
             // Otherwise extend the token's life and return the voter.
-            optToken.get().extendLifetime(connection);
-            return Voter.getById(connection, optToken.get().getVoterID());
+            accessTokenDAO.extendLifetime(token);
+            return voterDAO.getById(token.getVoterID());
         } catch (SQLException e) {
             //Log error
             return Optional.empty();

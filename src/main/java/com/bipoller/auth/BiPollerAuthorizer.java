@@ -1,6 +1,6 @@
 package com.bipoller.auth;
 
-import com.bipoller.Voter;
+import com.bipoller.models.Voter;
 import io.dropwizard.auth.Authorizer;
 
 /**

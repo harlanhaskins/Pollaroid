@@ -1,10 +1,13 @@
 package com.bipoller.resources;
 
-import com.bipoller.AccessToken;
+import com.bipoller.database.AccessTokenDAO;
+import com.bipoller.database.VoterDAO;
+import com.bipoller.models.AccessToken;
 import com.bipoller.auth.AuthRoles;
 import com.bipoller.auth.BiPollerAuthenticator;
-import com.bipoller.Voter;
+import com.bipoller.models.Voter;
 import io.dropwizard.auth.Auth;
+import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.annotation.security.RolesAllowed;
@@ -16,19 +19,15 @@ import javax.ws.rs.core.Response;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
-import java.util.UUID;
 
 @Path("/login")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@AllArgsConstructor
 public class AuthResource {
     private BiPollerAuthenticator authenticator;
-    private Connection connection;
-
-    public AuthResource(BiPollerAuthenticator authenticator, Connection connection) {
-        this.connection = connection;
-        this.authenticator = authenticator;
-    }
+    private VoterDAO voterDAO;
+    private AccessTokenDAO tokenDAO;
 
     /**
      * Tiny class to hold parameters
@@ -50,7 +49,7 @@ public class AuthResource {
     @POST
     public AccessToken login(@Valid APICredentials credentials) {
         try {
-            Optional<Voter> v = Voter.getByEmail(connection, credentials.email);
+            Optional<Voter> v = voterDAO.getByEmail(credentials.email);
             if (!v.isPresent()) {
                 throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
                         .entity("User with email " + credentials.email + " not found")
@@ -77,9 +76,9 @@ public class AuthResource {
     @Path("/logout")
     @RolesAllowed(AuthRoles.VOTER)
     public void logout(@Auth Voter voter) throws SQLException {
-        Optional<AccessToken> optToken = AccessToken.getByVoterID(connection, voter.getId());
+        Optional<AccessToken> optToken = tokenDAO.getByVoterID(voter.getId());
         if (optToken.isPresent()) {
-            optToken.get().delete(connection);
+            tokenDAO.delete(optToken.get());
         } else {
             throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
                     .entity("You are not logged in.")
