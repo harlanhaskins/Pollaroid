@@ -14,7 +14,7 @@ const BootstrapLink = ({ label, to, activeOnlyWhenExact }) => (
 );
 
 export default () => {
-  return <Navbar inverse collapseOnSelect fixedTop>
+  return <Navbar collapseOnSelect fixedTop>
     <Navbar.Header>
       <Navbar.Brand>
         <Link to='/'>BiPoller</Link>
