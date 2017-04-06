@@ -58,17 +58,14 @@ Example:
  "options": [
    {
      "id": 1,
-     "pollID": 1,
      "text": "Yes"
    },
    {
      "id": 2,
-     "pollID": 1,
      "text": "No"
    },
    {
      "id": 3,
-     "pollID": 1,
      "text": "Abstain"
    }
  ]

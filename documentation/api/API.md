@@ -168,3 +168,159 @@ Response:
   }
 ]
 ```
+
+## GET `/api/polls`
+
+This route gets all the polls for the logged-in voter's districts.
+It accepts no parameters, and returns a JSON array of `Poll` objects.
+
+### Example
+
+Response:
+```json
+[
+  {
+    "id": 1,
+    "submitter": {
+      "id": 1,
+      "name": "Harlan Haskins",
+      "phoneNumber": "8649189255",
+      "address": "1 Lomb Memorial Drive, Rochester, NY 14623",
+      "email": "harlan@csh.rit.edu",
+      "houseDistrict": {
+        "id": 1,
+        "number": 1,
+        "state": "NEW_YORK",
+        "congressionalBody": "SENATE",
+        "house": false,
+        "senate": true
+      },
+      "senateDistrict": {
+        "id": 2,
+        "number": 2,
+        "state": "NEW_YORK",
+        "congressionalBody": "HOUSE",
+        "house": true,
+        "senate": false
+      },
+      "representingDistrict": {
+        "id": 2,
+        "number": 2,
+        "state": "NEW_YORK",
+        "congressionalBody": "HOUSE",
+        "house": true,
+        "senate": false
+      }
+    },
+    "district": {
+      "id": 2,
+      "number": 2,
+      "state": "NEW_YORK",
+      "congressionalBody": "HOUSE",
+      "house": true,
+      "senate": false
+    },
+    "title": "How should I vote on HR1136?",
+    "options": [
+      {
+        "id": 1,
+        "text": "Yes"
+      },
+      {
+        "id": 2,
+        "text": "No"
+      },
+      {
+        "id": 3,
+        "text": "Abstain"
+      }
+    ]
+  }
+]
+```
+
+## POST `/api/polls`
+
+This will create a poll in the representative's district with the following parameters:
+
+| Key | Type | Description |
+| --- | ---- | ----------- |
+| `title` | String | The title of the poll |
+| `options` | [String] | The possible options for this poll. |
+
+It will return a full Poll object back.
+
+### Example
+
+Request:
+
+```json
+{
+  "title": "How should I vote on HR1136?",
+  "options": [
+    "Yes", "No", "Abstain"
+  ]
+}
+```
+
+Response:
+
+```json
+{
+  "id": 1,
+  "submitter": {
+    "id": 1,
+    "name": "Harlan Haskins",
+    "phoneNumber": "8649189255",
+    "address": "1 Lomb Memorial Drive, Rochester, NY 14623",
+    "email": "harlan@csh.rit.edu",
+    "houseDistrict": {
+      "id": 1,
+      "number": 1,
+      "state": "NEW_YORK",
+      "congressionalBody": "SENATE",
+      "house": false,
+      "senate": true
+    },
+    "senateDistrict": {
+      "id": 2,
+      "number": 2,
+      "state": "NEW_YORK",
+      "congressionalBody": "HOUSE",
+      "house": true,
+      "senate": false
+    },
+    "representingDistrict": {
+      "id": 2,
+      "number": 2,
+      "state": "NEW_YORK",
+      "congressionalBody": "HOUSE",
+      "house": true,
+      "senate": false
+    }
+  },
+  "district": {
+    "id": 2,
+    "number": 2,
+    "state": "NEW_YORK",
+    "congressionalBody": "HOUSE",
+    "house": true,
+    "senate": false
+  },
+  "title": "How should I vote on HR1136?",
+  "options": [
+    {
+      "id": 1,
+      "text": "Yes"
+    },
+    {
+      "id": 2,
+      "text": "No"
+    },
+    {
+      "id": 3,
+      "text": "Abstain"
+    }
+  ]
+}
+```
