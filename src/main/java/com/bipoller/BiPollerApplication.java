@@ -3,6 +3,11 @@ package com.bipoller;
 import com.bipoller.auth.AuthFeature;
 import com.bipoller.auth.BiPollerAuthFilter;
 import com.bipoller.auth.BiPollerAuthenticator;
+import com.bipoller.database.*;
+import com.bipoller.models.AccessToken;
+import com.bipoller.models.CongressionalBody;
+import com.bipoller.models.District;
+import com.bipoller.models.Voter;
 import com.bipoller.resources.*;
 import io.dropwizard.Application;
 import io.dropwizard.bundles.assets.ConfiguredAssetsBundle;
@@ -100,27 +105,31 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
     @Override
     public void run(BiPollerConfiguration configuration, Environment environment) throws Exception {
         SQLUtils.dropEverything(getConnection());
-        District.createTable(getConnection());
-        Voter.createTable(getConnection());
-        AccessToken.createTable(getConnection());
-        District house = District.create(getConnection(), 1,
-                US.NEW_YORK,
-                CongressionalBody.HOUSE);
-        District senate = District.create(getConnection(), 2,
-                US.NEW_YORK,
-                CongressionalBody.SENATE);
+
+        DistrictDAO districtDAO = new DistrictDAO(getConnection());
+        VoterDAO voterDAO = new VoterDAO(getConnection(), districtDAO);
+        PollDAO pollDAO = new PollDAO(getConnection(), voterDAO, districtDAO);
+        AccessTokenDAO tokenDAO = new AccessTokenDAO(getConnection(), voterDAO);
+
+        districtDAO.createTable();
+        voterDAO.createTable();
+        pollDAO.createTable();
+        tokenDAO.createTable();
+
+        District house = districtDAO.create(1, US.NEW_YORK, CongressionalBody.HOUSE);
+        District senate = districtDAO.create(2, US.NEW_YORK, CongressionalBody.SENATE);
         System.out.println("created House with ID: " + house.getId());
         System.out.println("created Senate with ID: " + senate.getId());
+
         environment.jersey().setUrlPattern("/api/*");
 
-
-        BiPollerAuthenticator authenticator = new BiPollerAuthenticator(getConnection());
+        BiPollerAuthenticator authenticator = new BiPollerAuthenticator(voterDAO, tokenDAO);
         BiPollerAuthFilter filter = new BiPollerAuthFilter(authenticator);
         environment.jersey().register(new AuthFeature(filter));
 
-        environment.jersey().register(new AuthResource(authenticator, getConnection()));
-        environment.jersey().register(new SignUpResource(getConnection()));
-        environment.jersey().register(new VoterResource(getConnection()));
+        environment.jersey().register(new AuthResource(authenticator, voterDAO, tokenDAO));
+        environment.jersey().register(new SignUpResource(voterDAO, districtDAO));
+        environment.jersey().register(new VoterResource(voterDAO));
     }
 
     @Override

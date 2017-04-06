@@ -1,6 +1,4 @@
-package com.bipoller;
-
-import java.util.Optional;
+package com.bipoller.models;
 
 /**
  * Created by harlan on 4/1/17.

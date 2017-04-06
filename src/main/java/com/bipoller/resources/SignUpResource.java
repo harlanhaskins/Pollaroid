@@ -1,8 +1,9 @@
 package com.bipoller.resources;
-import com.bipoller.District;
-import com.bipoller.Voter;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.jersey.params.LongParam;
+import com.bipoller.database.DistrictDAO;
+import com.bipoller.database.VoterDAO;
+import com.bipoller.models.District;
+import com.bipoller.models.Voter;
+import lombok.AllArgsConstructor;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -16,12 +17,10 @@ import java.util.Optional;
 @Path("/signup")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@AllArgsConstructor
 public class SignUpResource {
-    private Connection connection;
-
-    public SignUpResource(Connection connection) {
-        this.connection = connection;
-    }
+    private VoterDAO voterDAO;
+    private DistrictDAO districtDAO;
 
     public static class APIVoter {
         @NotNull
@@ -51,15 +50,12 @@ public class SignUpResource {
     @POST
     public Voter signUp(@Valid APIVoter voter) {
         try {
-            District house = District.getByIdOrThrow(connection, voter.houseDistrictID);
-            District senate = District.getByIdOrThrow(connection, voter.senateDistrictID);
-            Optional<District> represented = Optional.empty();
-            if (voter.representingDistrictID != null) {
-                represented = District.getById(connection, voter.representingDistrictID);
-            }
-            return Voter.create(connection, voter.name, voter.password,
-                                house, senate, voter.phoneNumber,
-                                voter.address, voter.email, represented);
+            District house = districtDAO.getByIdOrThrow(voter.houseDistrictID);
+            District senate = districtDAO.getByIdOrThrow(voter.senateDistrictID);
+            Optional<District> representing = districtDAO.getById(voter.representingDistrictID);
+            return voterDAO.create(voter.name, voter.password,
+                                   house, senate, voter.phoneNumber,
+                                   voter.address, voter.email, representing);
         } catch (SQLException e) {
             Response response =
                     Response.status(Response.Status.INTERNAL_SERVER_ERROR)

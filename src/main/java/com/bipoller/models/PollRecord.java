@@ -1,4 +1,4 @@
-package com.bipoller;
+package com.bipoller.models;
 
 public class PollRecord {
     private Poll poll;
