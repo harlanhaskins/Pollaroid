@@ -108,12 +108,17 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
 
         DistrictDAO districtDAO = new DistrictDAO(getConnection());
         VoterDAO voterDAO = new VoterDAO(getConnection(), districtDAO);
-        PollDAO pollDAO = new PollDAO(getConnection(), voterDAO, districtDAO);
+
+        PollOptionDAO pollOptionDAO = new PollOptionDAO(getConnection());
+        PollDAO pollDAO = new PollDAO(getConnection(), pollOptionDAO, voterDAO, districtDAO);
+        pollOptionDAO.setPollDAO(pollDAO);
+
         AccessTokenDAO tokenDAO = new AccessTokenDAO(getConnection(), voterDAO);
 
         districtDAO.createTable();
         voterDAO.createTable();
         pollDAO.createTable();
+        pollOptionDAO.createTable();
         tokenDAO.createTable();
 
         District house = districtDAO.create(1, US.NEW_YORK, CongressionalBody.HOUSE);
@@ -127,6 +132,7 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
         BiPollerAuthFilter filter = new BiPollerAuthFilter(authenticator);
         environment.jersey().register(new AuthFeature(filter));
 
+        environment.jersey().register(new PollResource(pollDAO));
         environment.jersey().register(new AuthResource(authenticator, voterDAO, tokenDAO));
         environment.jersey().register(new SignUpResource(voterDAO, districtDAO));
         environment.jersey().register(new VoterResource(voterDAO));

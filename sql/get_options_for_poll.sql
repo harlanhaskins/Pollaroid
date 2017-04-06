@@ -1,0 +1,1 @@
+select * from poll_option where poll_id = ?;

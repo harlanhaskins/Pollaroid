@@ -1,15 +1,7 @@
 package com.bipoller.models;
 
-import com.bipoller.database.SQLUtils;
 import lombok.AllArgsConstructor;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 public class Poll {
@@ -17,4 +9,25 @@ public class Poll {
     private Voter submitter;
     private District district;
     private String title;
+    private List<PollOption> options;
+
+    public long getId() {
+        return id;
+    }
+
+    public List<PollOption> getOptions() {
+        return options;
+    }
+
+    public Voter getSubmitter() {
+        return submitter;
+    }
+
+    public District getDistrict() {
+        return district;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }
