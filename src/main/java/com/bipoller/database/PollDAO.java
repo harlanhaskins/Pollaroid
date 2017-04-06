@@ -1,9 +1,6 @@
 package com.bipoller.database;
 
-import com.bipoller.models.District;
-import com.bipoller.models.Poll;
-import com.bipoller.models.PollOption;
-import com.bipoller.models.Voter;
+import com.bipoller.models.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

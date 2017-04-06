@@ -1,0 +1,1 @@
+select * from poll_record where voter_id = ? and poll_id = ?;
