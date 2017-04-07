@@ -324,3 +324,47 @@ Response:
   ]
 }
 ```
+
+## POST `/api/polls/:id/responses`
+
+This will record a response to the provided Poll.
+
+This will fail if:
+    - The Poll with the provided ID does not exist.
+    - The voter is not logged in
+    - The voter casting the vote does not reside in the district the
+      poll was created in.
+      
+This route will accept the following parameters:
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `optionID` | Int | The unique ID of the specific poll option being chosen. |
+      
+If successful, this will return a 204 Success No Data response.
+
+### Example
+
+Request:
+
+```json
+{
+  "optionID": 4
+}
+```
+
+Response:
+
+```
+HTTP 204 Success No Data
+```
+
+## GET `/api/polls/:id/responses`
+
+This will return a list of all responses to a provided poll.
+Note: This will return a 401 Unauthorized response if the current user
+is not the representative who submitted the poll. It does not expect any
+parameters.
+
+This will return a JSON array of `PollRecord` objects, corresponding to the
+votes cast.

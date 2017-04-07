@@ -49,11 +49,7 @@ public class PollResource {
             Voter voter = (Voter)context.getUserPrincipal();
             return pollDAO.getPollsInDistricts(voter.getHouseDistrict(), voter.getSenateDistrict());
         } catch (SQLException e) {
-            Response response =
-                    Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .entity(e.getMessage())
-                            .build();
-            throw new WebApplicationException(response);
+            throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -65,11 +61,7 @@ public class PollResource {
             return pollDAO.create(voter, voter.getRepresentingDistrict().get(),
                                   apiPoll.title, apiPoll.options);
         } catch (SQLException e) {
-            Response response =
-                    Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .entity(e.getMessage())
-                            .build();
-            throw new WebApplicationException(response);
+            throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -81,6 +73,11 @@ public class PollResource {
             Voter voter = (Voter)context.getUserPrincipal();
             Poll poll = pollDAO.getByIdOrThrow(pollID);
 
+            if (!voter.isInDistrict(poll.getDistrict())) {
+                throw new WebApplicationException("You cannot vote on this poll; you are not in this district.",
+                                                  Response.Status.UNAUTHORIZED);
+            }
+
             // Delete the existing response, if any.
             Optional<PollRecord> existing = pollRecordDAO.getVoterResponse(voter, poll);
             if (existing.isPresent()) {
@@ -90,11 +87,7 @@ public class PollResource {
             PollOption option = pollOptionDAO.getByIdOrThrow(record.optionID);
             pollRecordDAO.create(poll, option, voter);
         } catch (SQLException e) {
-            Response response =
-                    Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .entity(e.getMessage())
-                            .build();
-            throw new WebApplicationException(response);
+            throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -106,15 +99,15 @@ public class PollResource {
             Voter voter = (Voter)context.getUserPrincipal();
             Poll poll = pollDAO.getByIdOrThrow(pollID);
             if (poll.getSubmitter().getId() != voter.getId()) {
-                throw new WebApplicationException("You cannot get responses for a poll you did not create.");
+                Response response =
+                        Response.status(Response.Status.UNAUTHORIZED)
+                                .entity("You cannot get responses for a poll you did not create.")
+                                .build();
+                throw new WebApplicationException(response);
             }
             return pollRecordDAO.getResponses(poll);
         } catch (SQLException e) {
-            Response response =
-                    Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .entity(e.getMessage())
-                            .build();
-            throw new WebApplicationException(response);
+            throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 }

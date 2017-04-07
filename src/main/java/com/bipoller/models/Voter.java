@@ -50,6 +50,10 @@ public class Voter implements Principal {
         return email;
     }
 
+    public boolean isInDistrict(District district) {
+        return district.getId() == getHouseDistrict().getId() || district.getId() == getSenateDistrict().getId();
+    }
+
     @JsonIgnore
     public String getPasswordHash() {
         return passwordHash;

@@ -43,32 +43,25 @@ public class AuthResource {
     /**
      * Attempts to log in the user based on the provided credentials.
      *
-     * @param credentials
-     * @return
+     * @param credentials The login credentials for the user.
+     * @return An AccessToken if the user was successfully authenticated.
      */
     @POST
     public AccessToken login(@Valid APICredentials credentials) {
         try {
             Optional<Voter> v = voterDAO.getByEmail(credentials.email);
             if (!v.isPresent()) {
-                throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("User with email " + credentials.email + " not found")
-                        .build());
+                throw new WebApplicationException("User with email " + credentials.email + " not found",
+                                                  Response.Status.UNAUTHORIZED);
             }
             Voter voter = v.get();
             boolean isCorrectPassword = BCrypt.checkpw(credentials.password, voter.getPasswordHash());
             if (!isCorrectPassword) {
-                throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("Incorrect password.")
-                        .build());
+                throw new WebApplicationException("Incorrect password.", Response.Status.UNAUTHORIZED);
             }
             return authenticator.extendOrCreateToken(voter);
         } catch (SQLException e) {
-            Response response =
-                    Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .entity(e.getMessage())
-                            .build();
-            throw new WebApplicationException(response);
+            throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -80,9 +73,7 @@ public class AuthResource {
         if (optToken.isPresent()) {
             tokenDAO.delete(optToken.get());
         } else {
-            throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("You are not logged in.")
-                    .build());
+            throw new WebApplicationException("You are not logged in.", Response.Status.UNAUTHORIZED);
         }
     }
 }
