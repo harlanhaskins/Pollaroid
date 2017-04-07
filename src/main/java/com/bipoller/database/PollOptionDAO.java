@@ -2,7 +2,6 @@ package com.bipoller.database;
 
 import com.bipoller.models.Poll;
 import com.bipoller.models.PollOption;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

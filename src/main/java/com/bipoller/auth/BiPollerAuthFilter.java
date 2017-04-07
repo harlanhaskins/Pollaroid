@@ -3,6 +3,7 @@ package com.bipoller.auth;
 import com.bipoller.models.Voter;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.AuthenticationException;
+
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
@@ -11,7 +12,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * A filter that filters resources based on their requirements for authentication.
