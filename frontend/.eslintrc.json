@@ -1,6 +1,7 @@
 {
   "extends": ["standard", "standard-react"],
   "globals": {
+    "fetch": true
   },
   "rules": {
     "comma-dangle": ["error", {
