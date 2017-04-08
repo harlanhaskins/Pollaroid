@@ -23,11 +23,7 @@ public class VoterResource {
         try {
             return voterDAO.all();
         } catch (SQLException e) {
-            Response response =
-                    Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .entity(e.getMessage())
-                            .build();
-            throw new WebApplicationException(response);
+            throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 }

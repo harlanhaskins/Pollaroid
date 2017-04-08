@@ -1,15 +1,32 @@
 package com.bipoller.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+
 /**
- * Created by harlan on 4/1/17.
+ * Represents one of the options of a Poll.
  */
+@RequiredArgsConstructor
 public class PollOption {
+    @NonNull
     private Long id;
-    private Poll poll;
+
+    @NonNull
+    @JsonIgnore
+    private Long pollID;
+
+    @NonNull
     private String text;
 
-    int getNumberOfVotes() {
-        // TODO: Implement
-        return 0;
+    public Long getId() {
+        return id;
+    }
+
+    public Long getPollID() {
+        return pollID;
+    }
+
+    public String getText() {
+        return text;
     }
 }

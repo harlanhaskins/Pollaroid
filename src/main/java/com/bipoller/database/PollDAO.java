@@ -1,24 +1,25 @@
 package com.bipoller.database;
 
-import com.bipoller.models.District;
-import com.bipoller.models.Poll;
-import com.bipoller.models.Voter;
+import com.bipoller.models.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A DAO for working with Polls.
  */
 public class PollDAO extends BiPollerDAO<Poll, Long> {
+    private PollOptionDAO pollOptionDAO;
+    private VoterDAO voterDAO;
+    private DistrictDAO districtDAO;
 
-    VoterDAO voterDAO;
-    DistrictDAO districtDAO;
-
-    public PollDAO(Connection connection, VoterDAO voterDAO, DistrictDAO districtDAO) {
+    public PollDAO(Connection connection, PollOptionDAO pollOptionDAO, VoterDAO voterDAO, DistrictDAO districtDAO) {
         super(connection);
+        this.pollOptionDAO = pollOptionDAO;
         this.voterDAO = voterDAO;
         this.districtDAO = districtDAO;
     }
@@ -43,12 +44,40 @@ public class PollDAO extends BiPollerDAO<Poll, Long> {
         return "sql/insert_poll.sql";
     }
 
+    private List<PollOption> getOptions(long id) throws SQLException {
+        ArrayList<PollOption> options = new ArrayList<>();
+        PreparedStatement stmt = prepareStatementFromFile("sql/get_options_for_poll.sql");
+        stmt.setLong(1, id);
+
+        ResultSet r = stmt.executeQuery();
+        while (r.next()) {
+            options.add(pollOptionDAO.createFromResultSet(r));
+        }
+
+        return options;
+    }
+
+    public List<Poll> getPollsInDistricts(District house, District senate) throws SQLException {
+        PreparedStatement stmt = prepareStatementFromFile("sql/get_polls_in_districts.sql");
+        stmt.setLong(1, house.getId());
+        stmt.setLong(2, senate.getId());
+        ResultSet r = stmt.executeQuery();
+
+        ArrayList<Poll> polls = new ArrayList<>();
+        while (r.next()) {
+            polls.add(createFromResultSet(r));
+        }
+        return polls;
+    }
+
     @Override
     public Poll createFromResultSet(ResultSet r) throws SQLException {
-        return new Poll(r.getLong("id"),
+        long id = r.getLong("id");
+        return new Poll(id,
                         voterDAO.getByIdOrThrow(r.getLong("submitter_id")),
                         districtDAO.getByIdOrThrow(r.getLong("district_id")),
-                        r.getString("title"));
+                        r.getString("title"),
+                        getOptions(id));
     }
 
     /**
@@ -59,7 +88,7 @@ public class PollDAO extends BiPollerDAO<Poll, Long> {
      * @return A new Poll if it was created successfully.
      * @throws SQLException If there was a problem interacting with the database.
      */
-    public Poll create(Voter submitter, District district, String title) throws SQLException {
+    public Poll create(Voter submitter, District district, String title, List<String> options) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile(getSQLInsertPath());
         stmt.setLong(1, submitter.getId());
         stmt.setLong(2, district.getId());
@@ -68,7 +97,14 @@ public class PollDAO extends BiPollerDAO<Poll, Long> {
 
         ResultSet keys = stmt.getGeneratedKeys();
         if (keys.next()) {
-            return getByIdOrThrow(keys.getLong(1));
+            long id = keys.getLong(1);
+
+            // Create options for the new poll...
+            for (String option : options) {
+                pollOptionDAO.create(id, option);
+            }
+
+            return getByIdOrThrow(id);
         }
         throw new SQLException("Poll insert did not return an ID");
     }

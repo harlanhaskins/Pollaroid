@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -57,11 +56,7 @@ public class SignUpResource {
                                    house, senate, voter.phoneNumber,
                                    voter.address, voter.email, representing);
         } catch (SQLException e) {
-            Response response =
-                    Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .entity(e.getMessage())
-                            .build();
-            throw new WebApplicationException(response);
+            throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 }

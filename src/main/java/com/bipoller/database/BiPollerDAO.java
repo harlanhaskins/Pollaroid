@@ -125,9 +125,7 @@ public abstract class BiPollerDAO<T, IdType> {
             String sql = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
             return connection.prepareStatement(sql);
         } catch (IOException e) {
-            System.err.println("Could not find file at " + path + ", aborting...");
-            System.exit(-1);
-            return null; // Thanks, Java...
+            throw new SQLException("Could not find file at " + path + ", aborting...");
         }
     }
 }
