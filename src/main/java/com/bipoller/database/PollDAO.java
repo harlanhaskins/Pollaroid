@@ -89,23 +89,25 @@ public class PollDAO extends BiPollerDAO<Poll, Long> {
      * @throws SQLException If there was a problem interacting with the database.
      */
     public Poll create(Voter submitter, District district, String title, List<String> options) throws SQLException {
-        PreparedStatement stmt = prepareStatementFromFile(getSQLInsertPath());
-        stmt.setLong(1, submitter.getId());
-        stmt.setLong(2, district.getId());
-        stmt.setString(3, title);
-        stmt.executeUpdate();
+        return executeInTransaction(() -> {
+            PreparedStatement stmt = prepareStatementFromFile(getSQLInsertPath());
+            stmt.setLong(1, submitter.getId());
+            stmt.setLong(2, district.getId());
+            stmt.setString(3, title);
+            stmt.executeUpdate();
 
-        ResultSet keys = stmt.getGeneratedKeys();
-        if (keys.next()) {
-            long id = keys.getLong(1);
+            ResultSet keys = stmt.getGeneratedKeys();
+            if (keys.next()) {
+                long id = keys.getLong(1);
 
-            // Create options for the new poll...
-            for (String option : options) {
-                pollOptionDAO.create(id, option);
+                // Create options for the new poll...
+                for (String option : options) {
+                    pollOptionDAO.create(id, option);
+                }
+
+                return getByIdOrThrow(id);
             }
-
-            return getByIdOrThrow(id);
-        }
-        throw new SQLException("Poll insert did not return an ID");
+            throw new SQLException("Poll insert did not return an ID");
+        });
     }
 }

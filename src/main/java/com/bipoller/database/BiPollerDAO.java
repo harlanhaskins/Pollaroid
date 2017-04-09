@@ -11,12 +11,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
+
+@FunctionalInterface
+interface InTransactionFunction<T> {
+    T execute() throws SQLException;
+}
 
 /**
  * An abstract class that defines a Data Access Object that's responsible for marshalling Java objects to and from
  * the database.
  */
-public abstract class BiPollerDAO<T, IdType> {
+public abstract class BiPollerDAO<Data, IdType> {
     protected Connection connection;
 
     public BiPollerDAO(Connection connection) {
@@ -52,7 +58,7 @@ public abstract class BiPollerDAO<T, IdType> {
      * @return A fully-formed Java object containing the deserialized values.
      * @throws SQLException If the result set was, in any way, invalid.
      */
-    public abstract T createFromResultSet(ResultSet r) throws SQLException;
+    public abstract Data createFromResultSet(ResultSet r) throws SQLException;
 
     /**
      * Creates the table this DAO represents.
@@ -69,7 +75,7 @@ public abstract class BiPollerDAO<T, IdType> {
      * @throws SQLException If there was a problem interacting with the database. If an object was not found, then
      *                      this method will return Optional.empty(), not throw.
      */
-    public Optional<T> getById(IdType id) throws SQLException {
+    public Optional<Data> getById(IdType id) throws SQLException {
 
         // If they passed null for the ID, just give them empty().
         if (id == null) {
@@ -106,8 +112,8 @@ public abstract class BiPollerDAO<T, IdType> {
      * @return The object in the database with the provided ID.
      * @throws SQLException If there was a problem interacting with the database, or if the object was not found.
      */
-    public T getByIdOrThrow(IdType id) throws SQLException {
-        Optional<T> value = getById(id);
+    public Data getByIdOrThrow(IdType id) throws SQLException {
+        Optional<Data> value = getById(id);
         if (value.isPresent()) {
             return value.get();
         }
@@ -126,6 +132,20 @@ public abstract class BiPollerDAO<T, IdType> {
             return connection.prepareStatement(sql);
         } catch (IOException e) {
             throw new SQLException("Could not find file at " + path + ", aborting...");
+        }
+    }
+
+    protected <T> T executeInTransaction(InTransactionFunction<T> function) throws SQLException {
+        connection.setAutoCommit(false);
+        try {
+            T value = function.execute();
+            connection.commit();
+            return value;
+        } catch (SQLException e) {
+            connection.rollback();
+            throw e;
+        } finally {
+            connection.setAutoCommit(true);
         }
     }
 }
