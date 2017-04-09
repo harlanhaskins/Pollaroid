@@ -10,6 +10,7 @@ import Vote from './Vote.js';
 import Explore from './Explore.js';
 import Signup from './Signup.js';
 import Login from './Login.js';
+import Poll from './Poll.js';
 
 class App extends Component {
   render() {
@@ -21,6 +22,7 @@ class App extends Component {
         <Route exact path='/explore' component={Explore} />
         <Route exact path='/signup' component={Signup} />
         <Route exact path='/login' component={Login} />
+        <Route path='/vote/:pollId' component={Poll} />
       </div>
     </Router>;
   }

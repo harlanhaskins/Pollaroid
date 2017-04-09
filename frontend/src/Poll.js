@@ -3,7 +3,7 @@ import DataLoader from './DataLoader';
 import ApiTable from './ApiTable';
 import api from './api';
 
-class Vote extends Component {
+class Poll extends Component {
   constructor() {
     super();
 
@@ -14,24 +14,26 @@ class Vote extends Component {
   }
 
   componentDidMount() {
-    api('polls').then((data) => {
-      this.setState({
-        data,
-        loaded: true,
+    api(`polls/${this.props.match.params.pollId}/responses`)
+      .then((data) => {
+        this.setState({
+          data,
+          loaded: true,
+        });
       });
-    });
   }
+
 
   render() {
     return <div className='container'>
       <div className='starter-template'>
-        <h1>Vote.</h1>
+        <h1>Poll.</h1>
         <DataLoader loaded={this.state.loaded}>
-          <ApiTable data={this.state.data} detailLink />
+          <ApiTable data={this.state.data} />
         </DataLoader>
       </div>
     </div>;
   }
 }
 
-export default Vote;
+export default Poll;
