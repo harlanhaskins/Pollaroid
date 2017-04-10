@@ -9,6 +9,8 @@ import unitedstates.US;
 public class District {
     private long id;
     private int number;
+
+    @JsonIgnore
     private US state;
 
     @JsonIgnore
@@ -22,9 +24,13 @@ public class District {
         return number;
     }
 
+    @JsonIgnore
     public US getState() {
         return state;
     }
+
+    public String getStateName() { return state.getUnabbreviated(); }
+    public String getStateCode() { return state.getANSIAbbreviation(); }
 
     public CongressionalBody getCongressionalBody() {
         return congressionalBody;
