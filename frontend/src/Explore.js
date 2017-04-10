@@ -5,6 +5,7 @@ class Explore extends Component {
     return <div className='container'>
       <div className='starter-template'>
         <h1>Explore.</h1>
+        <p>Coming soon!</p>
       </div>
     </div>;
   }
