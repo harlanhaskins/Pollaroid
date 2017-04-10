@@ -20,6 +20,13 @@ class Vote extends Component {
     }
 
     api('polls').then((data) => {
+      // TODO: not this.
+      data.forEach((item) => {
+        item.district = item.district.number;
+        item.submitter = item.submitter.name;
+        item.options = item.options.map((option) => option.text);
+      });
+
       this.setState({
         data,
         loaded: true,
