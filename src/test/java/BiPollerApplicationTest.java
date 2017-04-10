@@ -40,8 +40,6 @@ public class BiPollerApplicationTest extends TestCase {
     @Override
     /**
      * Creates sample data for Testing
-     *
-     * Will Eventually open a database connection.
      */
     public void setUp() throws Exception {
 
@@ -64,59 +62,16 @@ public class BiPollerApplicationTest extends TestCase {
 
 
         // Create Sample Tuples
-        sampleHouseDistrict = new District( (long)1     ,
-                                            1           ,
-                                            US.NEW_YORK ,
-                                            CongressionalBody.HOUSE);
-
-        sampleSenateDistrict = new District(    (long)2                  ,
-                                                2                        ,
-                                                US.NEW_YORK              ,
-                                                CongressionalBody.SENATE );
-
-        sampleVoter = new Voter(    0001                    ,
-                                    "Luke Shadler"          ,
-                                    "pass1234"              ,
-                                    "5851234567"            ,
-                                    "1 Lomb Memorial Drive" ,
-                                    "email-me@rit.edu"      ,
-                                    sampleHouseDistrict     ,
-                                    sampleSenateDistrict    ,
-                                    Optional.empty()        );
-
-        sampleRepresentative = new Voter(   0001                                ,
-                                            "Harlan Haskins"                    ,
-                                            "pass4321"                          ,
-                                            "5857654321"                        ,
-                                            "1 Lomb Memorial Drive"             ,
-                                            "email-me@rit.edu"                  ,
-                                            sampleHouseDistrict                 ,
-                                            sampleSenateDistrict                ,
-                                            Optional.of(sampleSenateDistrict)   );
-
-        sampleOption1 = new PollOption( (long) 1,
-                                        (long) 1,
-                                        "Cats"  );
-        sampleOption2 = new PollOption( (long) 2,
-                                        (long) 1,
-                                        "Dogs"  );
+        sampleOption1 = new PollOption((long)1,(long)1,"Cats");
+        sampleOption2 = new PollOption((long)2,(long)1,"Dogs");
 
         List<PollOption> opts = new ArrayList<>();
         opts.add(sampleOption1);
         opts.add(sampleOption2);
 
-        samplePoll = new Poll(  (long) 1                ,
-                                sampleRepresentative    ,
-                                sampleSenateDistrict    ,
-                                "Cats or Dogs?"         ,
-                                opts                    );
+        samplePoll = new Poll((long)1,sampleRepresentative,
+                              sampleSenateDistrict,"Cats or Dogs?",opts);
 
-        
-        assertNotNull(sampleVoter);
-        assertNotNull(sampleRepresentative);
-        assertNotNull(sampleHouseDistrict);
-        assertNotNull(sampleSenateDistrict);
-        assertNotNull(samplePoll);
 
         SQLUtils.dropEverything(server.getConnection());
         districtDAO   = new DistrictDAO(server.getConnection());
@@ -153,29 +108,22 @@ public class BiPollerApplicationTest extends TestCase {
     public void testInsertAndAccessVoters() {
         try {
 
-
-
-
-
-
-
-
             districtDAO.create(1,US.NEW_YORK,CongressionalBody.HOUSE);
             districtDAO.create(2,US.NEW_YORK,CongressionalBody.SENATE);
 
             voterDAO.create("Luke Shadler",
                     "pass1234",
-                    sampleHouseDistrict,
-                    sampleSenateDistrict,
+                    districtDAO.getById((long)1).get(),
+                    districtDAO.getById((long)2).get(),
                     "5851234567",
                     "1 Lomb Memorial Drive",
                     "test123@gmail.com",
-                    Optional.of(sampleSenateDistrict));
+                    Optional.of(districtDAO.getById((long)2).get()));
 
             voterDAO.create("Harlan Haskins",
                             "pass4321",
-                            sampleHouseDistrict,
-                            sampleSenateDistrict,
+                            districtDAO.getById((long)1).get(),
+                            districtDAO.getById((long)2).get(),
                             "5857654321",
                             "1 Lomb Memorial Drive",
                             "test321@gmail.com",
@@ -194,7 +142,4 @@ public class BiPollerApplicationTest extends TestCase {
             e.printStackTrace();
         }
     }
-
-
-
 }
