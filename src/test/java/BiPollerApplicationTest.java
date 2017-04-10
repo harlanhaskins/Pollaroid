@@ -182,9 +182,13 @@ public class BiPollerApplicationTest extends TestCase {
                             Optional.empty());
 
             List<Voter> voters = voterDAO.all();
+            String namesSpaceSeparated = "";
             for(Voter v : voters) {
                 System.out.printf("%s: %s\n",v.getName(),v.getEmail());
+                namesSpaceSeparated += v.getName() + " ";
             }
+
+            assertEquals("Luke Shadler Harlan Haskins",namesSpaceSeparated.trim());
         }
         catch(SQLException e) {
             e.printStackTrace();
