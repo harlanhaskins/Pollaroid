@@ -61,15 +61,6 @@ public class BiPollerApplicationTest extends TestCase {
         catch(Exception e) {
             e.printStackTrace();
         }
-//
-//        // Run Database
-//        try {
-//            server.run(config, env);
-//        }
-//        catch(Exception e) {
-//            e.printStackTrace(); // I should handle this better
-//        }
-
 
 
         // Create Sample Tuples
@@ -109,6 +100,7 @@ public class BiPollerApplicationTest extends TestCase {
         sampleOption2 = new PollOption( (long) 2,
                                         (long) 1,
                                         "Dogs"  );
+
         List<PollOption> opts = new ArrayList<>();
         opts.add(sampleOption1);
         opts.add(sampleOption2);
@@ -119,6 +111,7 @@ public class BiPollerApplicationTest extends TestCase {
                                 "Cats or Dogs?"         ,
                                 opts                    );
 
+        
         assertNotNull(sampleVoter);
         assertNotNull(sampleRepresentative);
         assertNotNull(sampleHouseDistrict);
@@ -133,12 +126,12 @@ public class BiPollerApplicationTest extends TestCase {
         pollRecordDAO = new PollRecordDAO(server.getConnection(),pollDAO,pollOptionDAO,voterDAO);
         tokenDAO      = new AccessTokenDAO(server.getConnection(),voterDAO);
 
-
-
-
-
-
-
+        districtDAO.createTable();
+        voterDAO.createTable();
+        pollDAO.createTable();
+        pollOptionDAO.createTable();
+        pollRecordDAO.createTable();
+        tokenDAO.createTable();
 
 
     }
@@ -160,15 +153,15 @@ public class BiPollerApplicationTest extends TestCase {
     public void testInsertAndAccessVoters() {
         try {
 
-            SQLUtils.dropEverything(server.getConnection());                  
-            districtDAO.createTable();                                        
-            voterDAO.createTable();                                           
-            pollDAO.createTable();                                            
-            pollOptionDAO.createTable();                                      
-            pollRecordDAO.createTable();                                      
-            tokenDAO.createTable();                                           
 
 
+
+
+
+
+
+            districtDAO.create(1,US.NEW_YORK,CongressionalBody.HOUSE);
+            districtDAO.create(2,US.NEW_YORK,CongressionalBody.SENATE);
 
             voterDAO.create("Luke Shadler",
                     "pass1234",
