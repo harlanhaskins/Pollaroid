@@ -13,7 +13,7 @@ const api = (resource, body) => {
     options.headers['Content-Type'] = 'application/json';
   }
 
-  return fetch(`http://localhost:8080/api/${resource}`, options)
+  return fetch(`https://bipoller.com/api/${resource}`, options)
     .then((response) => {
       return response.json();
     })

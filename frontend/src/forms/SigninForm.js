@@ -54,14 +54,14 @@ export default class SignupForm extends React.Component {
           </InputWrapper>
         </FormGroup>
         <FormGroup>
-          <Label htmlFor='email'>Password</Label>
+          <Label htmlFor='password'>Password</Label>
           <InputWrapper>
-            <Control.text className={INPUT_CLASS} model='.password' />
+            <Control type='password' className={INPUT_CLASS} model='.password' />
           </InputWrapper>
         </FormGroup>
         <FormGroup>
           <div className='col-sm-offset-2 col-sm-10'>
-            <button type='submit' className='btn btn-primary' disabled={this.state.loading}>Sign Up</button>
+            <button type='submit' className='btn btn-primary' disabled={this.state.loading}>Sign In</button>
           </div>
         </FormGroup>
         { this.state.loading && <Spinner /> }
