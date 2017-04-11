@@ -17,25 +17,25 @@ import java.util.List;
 
 public class BiPollerApplicationTest extends TestCase {
 
-    protected BiPollerApplication   server;
+    protected BiPollerApplication server;
     protected BiPollerConfiguration config;
-    protected Environment           env;
+    protected Environment env;
 
-    protected Poll       samplePoll;
-    protected PollOption sampleOption1,sampleOption2;
+    protected Poll samplePoll;
+    protected PollOption sampleOption1, sampleOption2;
 
-    protected Voter         sampleVoter;
-    protected Voter         sampleRepresentative;
-    protected District      sampleHouseDistrict;
-    protected District      sampleSenateDistrict;
-    protected PollRecord    samplePollRecord;
+    protected Voter sampleVoter;
+    protected Voter sampleRepresentative;
+    protected District sampleHouseDistrict;
+    protected District sampleSenateDistrict;
+    protected PollRecord samplePollRecord;
 
-    protected DistrictDAO       districtDAO;
-    protected VoterDAO          voterDAO;
-    protected PollRecordDAO     pollRecordDAO;
-    protected PollOptionDAO     pollOptionDAO;
-    protected PollDAO           pollDAO;
-    protected AccessTokenDAO    tokenDAO;
+    protected DistrictDAO districtDAO;
+    protected VoterDAO voterDAO;
+    protected PollRecordDAO pollRecordDAO;
+    protected PollOptionDAO pollOptionDAO;
+    protected PollDAO pollDAO;
+    protected AccessTokenDAO tokenDAO;
 
     @Override
     /**
@@ -50,36 +50,34 @@ public class BiPollerApplicationTest extends TestCase {
         config = new BiPollerConfiguration();
 
 
-
         // Attempt to make a connection to database
         try {
             server.createConnectionFromConfig();
             Assert.assertNotNull(server.getConnection());
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
 
         // Create Sample Tuples
-        sampleOption1 = new PollOption((long)1,(long)1,"Cats");
-        sampleOption2 = new PollOption((long)2,(long)1,"Dogs");
+        sampleOption1 = new PollOption((long) 1, (long) 1, "Cats");
+        sampleOption2 = new PollOption((long) 2, (long) 1, "Dogs");
 
         List<PollOption> opts = new ArrayList<>();
         opts.add(sampleOption1);
         opts.add(sampleOption2);
 
-        samplePoll = new Poll((long)1,sampleRepresentative,
-                              sampleSenateDistrict,"Cats or Dogs?",opts);
+        samplePoll = new Poll((long) 1, sampleRepresentative,
+                sampleSenateDistrict, "Cats or Dogs?", opts);
 
 
         SQLUtils.dropEverything(server.getConnection());
-        districtDAO   = new DistrictDAO(server.getConnection());
-        voterDAO      = new VoterDAO(server.getConnection(),districtDAO);
+        districtDAO = new DistrictDAO(server.getConnection());
+        voterDAO = new VoterDAO(server.getConnection(), districtDAO);
         pollOptionDAO = new PollOptionDAO(server.getConnection());
-        pollDAO       = new PollDAO(server.getConnection(),pollOptionDAO,voterDAO,districtDAO);
-        pollRecordDAO = new PollRecordDAO(server.getConnection(),pollDAO,pollOptionDAO,voterDAO);
-        tokenDAO      = new AccessTokenDAO(server.getConnection(),voterDAO);
+        pollDAO = new PollDAO(server.getConnection(), pollOptionDAO, voterDAO, districtDAO);
+        pollRecordDAO = new PollRecordDAO(server.getConnection(), pollDAO, pollOptionDAO, voterDAO);
+        tokenDAO = new AccessTokenDAO(server.getConnection(), voterDAO);
 
         districtDAO.createTable();
         voterDAO.createTable();
@@ -105,37 +103,116 @@ public class BiPollerApplicationTest extends TestCase {
     /**
      *  Attempts to add new tuples to tables
      */
-    public void testInsertAndAccessVoters() {
+    public void testInsertAndUpdateVoter() {
         try {
 
-            districtDAO.create(1,US.NEW_YORK,CongressionalBody.HOUSE);
-            districtDAO.create(2,US.NEW_YORK,CongressionalBody.SENATE);
+            districtDAO.create(1, US.NEW_YORK, CongressionalBody.HOUSE);
+            districtDAO.create(2, US.NEW_YORK, CongressionalBody.SENATE);
 
             voterDAO.create("Luke Shadler",
                     "pass1234",
-                    districtDAO.getById((long)1).get(),
-                    districtDAO.getById((long)2).get(),
+                    districtDAO.getById((long) 1).get(),
+                    districtDAO.getById((long) 2).get(),
                     "5851234567",
                     "1 Lomb Memorial Drive",
                     "test123@gmail.com",
-                    Optional.of(districtDAO.getById((long)2).get()));
+                    Optional.of(districtDAO.getById((long) 2).get()));
 
             voterDAO.create("Harlan Haskins",
-                            "pass4321",
-                            districtDAO.getById((long)1).get(),
-                            districtDAO.getById((long)2).get(),
-                            "5857654321",
-                            "1 Lomb Memorial Drive",
-                            "test321@gmail.com",
-                            Optional.empty());
+                    "pass4321",
+                    districtDAO.getById((long) 1).get(),
+                    districtDAO.getById((long) 2).get(),
+                    "5857654321",
+                    "1 Lomb Memorial Drive",
+                    "test321@gmail.com",
+                    Optional.empty());
 
             List<Voter> voters = voterDAO.all();
             String namesSpaceSeparated = "";
-            assertEquals("Luke Shadler",voters.get(0).getName());
-            assertEquals("Harlan Haskins",voters.get(1).getName());
-        }
-        catch(SQLException e) {
+            assertEquals("Luke Shadler", voters.get(0).getName());
+            assertEquals("Harlan Haskins", voters.get(1).getName());
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testCreatePoll() {
+        try {
+            districtDAO.create(1, US.NEW_YORK, CongressionalBody.HOUSE);
+            districtDAO.create(2, US.NEW_YORK, CongressionalBody.SENATE);
+
+            voterDAO.create("Luke Shadler",
+                    "pass1234",
+                    districtDAO.getById((long) 1).get(),
+                    districtDAO.getById((long) 2).get(),
+                    "5851234567",
+                    "1 Lomb Memorial Drive",
+                    "test123@gmail.com",
+                    Optional.of(districtDAO.getById((long) 2).get()));
+
+
+            List<String> options = new ArrayList<>();
+            options.add("Cats");
+            options.add("Dogs");
+
+            pollDAO.create(voterDAO.getById((long) 1).get(), districtDAO.getById((long)1).get(),
+                    "Cats or dogs?", options);
+
+            List<Poll> polls = pollDAO.getPollsInDistricts(districtDAO.getById((long)1).get(),
+                                                          districtDAO.getById((long)2).get());
+            assertEquals(polls.size(),1);
+
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testCreatePollRecord() {
+        try {
+            districtDAO.create(1, US.NEW_YORK, CongressionalBody.HOUSE);
+            districtDAO.create(2, US.NEW_YORK, CongressionalBody.SENATE);
+
+            voterDAO.create("Luke Shadler",
+                    "pass1234",
+                    districtDAO.getById((long) 1).get(),
+                    districtDAO.getById((long) 2).get(),
+                    "5851234567",
+                    "1 Lomb Memorial Drive",
+                    "test123@gmail.com",
+                    Optional.of(districtDAO.getById((long) 2).get()));
+
+            voterDAO.create("Harlan Haskins",
+                    "pass4321",
+                    districtDAO.getById((long) 1).get(),
+                    districtDAO.getById((long) 2).get(),
+                    "5857654321",
+                    "1 Lomb Memorial Drive",
+                    "test321@gmail.com",
+                    Optional.empty());
+
+            List<String> options = new ArrayList<>();
+            options.add("Cats");
+            options.add("Dogs");
+
+            pollDAO.create(voterDAO.getById((long) 1).get(), districtDAO.getById((long)1).get(),
+                    "Cats or dogs?", options);
+
+            pollRecordDAO.create(pollDAO.getById((long)1).get(),pollOptionDAO.getById((long)1).get(),
+                                 voterDAO.getById((long)2).get());
+
+            PollRecord sampleRecord = pollRecordDAO.getVoterResponse(voterDAO.getById((long) 2).get(),
+                                                        pollDAO.getById((long) 1).get()).get();
+
+            assertEquals(sampleRecord.getChoice().getText(),"Cats");
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 }
