@@ -53,7 +53,7 @@ public class BiPollerApplicationTest extends TestCase {
 
         // Attempt to make a connection to database
         try {
-            server.createConnection("/home/lshadler/bipoller","lshadler","1234");
+            server.createConnectionFromConfig();
             Assert.assertNotNull(server.getConnection());
         }
         catch(Exception e) {
