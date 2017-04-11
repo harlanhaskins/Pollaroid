@@ -1,4 +1,4 @@
 test:
   pre:
-    - echo 'location=.\nusername=circle\npassword=password' > database.cfg
+    - printf "location=.\nusername=circle\npassword=password" > database.cfg
 
