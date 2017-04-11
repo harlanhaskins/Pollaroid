@@ -57,7 +57,7 @@ public class DistrictDAO extends BiPollerDAO<District, Long> {
     public District create(int number, US state, CongressionalBody body) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile(getSQLInsertPath());
         stmt.setInt(1, number);
-        stmt.setString(2, "NY" /* TODO: Fix */);
+        stmt.setString(2, state.getANSIAbbreviation());
         stmt.setBoolean(3, body == CongressionalBody.SENATE);
         stmt.executeUpdate();
 

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BiPollerApplicationTest extends TestCase {
-
     protected BiPollerApplication server;
     protected BiPollerConfiguration config;
     protected Environment env;
@@ -131,6 +130,7 @@ public class BiPollerApplicationTest extends TestCase {
             String namesSpaceSeparated = "";
             assertEquals("Luke Shadler", voters.get(0).getName());
             assertEquals("Harlan Haskins", voters.get(1).getName());
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -214,5 +214,4 @@ public class BiPollerApplicationTest extends TestCase {
             e.printStackTrace();
         }
 
-    }
 }

@@ -28,7 +28,7 @@ export default () => {
       </Nav>
       <Nav pullRight>
         <BootstrapLink to='/signup' label='Sign Up' />
-        <BootstrapLink to='/login' label='Log In' />
+        <BootstrapLink to='/login' label='Sign In' />
       </Nav>
     </Navbar.Collapse>
   </Navbar>;

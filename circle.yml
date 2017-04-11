@@ -1,0 +1,4 @@
+test:
+  pre:
+    - printf "location=.\nusername=circle\npassword=password" > database.cfg
+
