@@ -1,0 +1,4 @@
+test:
+  pre:
+    - echo 'location=.\nusername=circle\npassword=password' > database.cfg
+
