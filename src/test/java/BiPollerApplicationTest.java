@@ -136,6 +136,7 @@ public class BiPollerApplicationTest extends TestCase {
                     districtDAO.getById((long)2).get());
             assertEquals(polls.size(),1);
 
+
         }
         catch(SQLException e)
         {
@@ -181,6 +182,15 @@ public class BiPollerApplicationTest extends TestCase {
                     pollDAO.getById((long) 1).get()).get();
 
             assertEquals(sampleRecord.getChoice().getText(), "Cats");
+
+            pollRecordDAO.delete(sampleRecord);
+
+            Optional<PollRecord> record = pollRecordDAO.getVoterResponse(voterDAO.getById((long) 2).get(),
+                    pollDAO.getById((long) 1).get());
+
+            Assert.assertTrue(!record.isPresent());
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
