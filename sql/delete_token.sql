@@ -1,1 +1,1 @@
-delete from token where id = ?;
+delete from token where uuid = ?;

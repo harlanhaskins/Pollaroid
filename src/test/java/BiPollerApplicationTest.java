@@ -185,4 +185,41 @@ public class BiPollerApplicationTest extends TestCase {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testLogonTokens() {
+        try {
+            districtDAO.create(1, US.NEW_YORK, CongressionalBody.HOUSE);
+            districtDAO.create(2, US.NEW_YORK, CongressionalBody.SENATE);
+
+            voterDAO.create("Luke Shadler",
+                    "pass1234",
+                    districtDAO.getById((long) 1).get(),
+                    districtDAO.getById((long) 2).get(),
+                    "5851234567",
+                    "1 Lomb Memorial Drive",
+                    "test123@gmail.com",
+                    Optional.of(districtDAO.getById((long) 2).get()));
+
+            voterDAO.create("Harlan Haskins",
+                    "pass4321",
+                    districtDAO.getById((long) 1).get(),
+                    districtDAO.getById((long) 2).get(),
+                    "5857654321",
+                    "1 Lomb Memorial Drive",
+                    "test321@gmail.com",
+                    Optional.empty());
+
+            tokenDAO.create(voterDAO.getByEmail("test321@gmail.com").get());
+            Optional<AccessToken> tokenLuke = tokenDAO.getByVoterID((long)1);
+            assertTrue(!tokenLuke.isPresent());
+
+            tokenDAO.delete(tokenDAO.getByVoterID((long)2).get());
+
+
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
