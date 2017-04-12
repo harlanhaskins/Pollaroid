@@ -78,7 +78,7 @@ public class PollRecordDAO extends BiPollerDAO<PollRecord, Long> {
     public Optional<PollRecord> getVoterResponse(Voter voter, Poll poll) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile("sql/get_poll_record_by_voter_and_poll.sql");
         stmt.setLong(1, voter.getId());
-        stmt.setLong(2, voter.getId());
+        stmt.setLong(2, poll.getId());
         ResultSet r = stmt.executeQuery();
 
         if (r.next()) {
