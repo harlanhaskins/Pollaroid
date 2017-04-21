@@ -5,6 +5,8 @@ import {
   Link
 } from 'react-router-dom';
 
+import auth from './auth';
+
 const BootstrapLink = ({ label, to, activeOnlyWhenExact }) => (
   <Route path={to} exact={activeOnlyWhenExact} children={({ match }) => (
     <li className={match ? 'active' : ''}>
@@ -13,7 +15,7 @@ const BootstrapLink = ({ label, to, activeOnlyWhenExact }) => (
   )} />
 );
 
-export default () => {
+export default ({ loggedIn }) => {
   return <Navbar collapseOnSelect fixedTop>
     <Navbar.Header>
       <Navbar.Brand>
@@ -26,10 +28,18 @@ export default () => {
         <BootstrapLink to='/vote' label='Vote' />
         <BootstrapLink to='/explore'label='Explore' />
       </Nav>
-      <Nav pullRight>
+      { loggedIn && <Nav pullRight>
+        <Navbar.Text>
+          Welcome back, {auth.getData().voter.name}!
+        </Navbar.Text>
+        <li>
+          <a onClick={() => auth.logout()} href='#'>Log Out</a>
+        </li>
+      </Nav> }
+      { !loggedIn && <Nav pullRight>
         <BootstrapLink to='/signup' label='Sign Up' />
         <BootstrapLink to='/login' label='Sign In' />
-      </Nav>
+      </Nav> }
     </Navbar.Collapse>
   </Navbar>;
 };
