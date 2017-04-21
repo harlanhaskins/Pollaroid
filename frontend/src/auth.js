@@ -1,3 +1,6 @@
+import Cookie from 'js-cookie';
+
+const COOKIE_KEY = 'bipoller_auth_info';
 const globalAuth = {
   data: null,
   listeners: [],
@@ -16,11 +19,13 @@ const notifyListeners = () => {
 
 const login = (data) => {
   globalAuth.data = data;
+  Cookie.set(COOKIE_KEY, data, { expires: 365 });
   notifyListeners();
 };
 
 const logout = () => {
   globalAuth.data = null;
+  Cookie.remove(COOKIE_KEY);
   notifyListeners();
 };
 
@@ -39,6 +44,15 @@ const getData = () => {
 
   return globalAuth.data;
 };
+
+const initialize = () => {
+  const cookieData = Cookie.getJSON(COOKIE_KEY);
+  if (cookieData) {
+    login(cookieData);
+  }
+};
+
+initialize();
 
 export default {
   login,
