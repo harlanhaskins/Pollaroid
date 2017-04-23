@@ -4,6 +4,10 @@ import com.bipoller.database.*;
 import com.bipoller.models.*;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import io.dropwizard.setup.Environment;
 import junit.framework.TestCase;
@@ -51,6 +55,13 @@ public class BiPollerApplicationTest extends TestCase {
             pollRecordDAO = new PollRecordDAO(server.getConnection(),pollDAO,pollOptionDAO,voterDAO);
             tokenDAO      = new AccessTokenDAO(server.getConnection(),voterDAO);
 
+            assertEquals(districtDAO.getTableName(),"district");
+            assertEquals(voterDAO.getTableName(),"voter");
+            assertEquals(pollDAO.getTableName(),"poll");
+            assertEquals(pollOptionDAO.getTableName(),"poll_option");
+
+
+
             SQLUtils.dropEverything(server.getConnection());
 
             districtDAO.createTable();
@@ -84,7 +95,7 @@ public class BiPollerApplicationTest extends TestCase {
                         "5851234567",
                         "1 Lomb Memorial Drive",
                         "test123@gmail.com",
-                        Optional.of(sampleSenateDistrict));
+                        Optional.empty());
 
         voterDAO.create("Harlan Haskins",
                         "pass4321",
@@ -93,14 +104,25 @@ public class BiPollerApplicationTest extends TestCase {
                         "5857654321",
                         "1 Lomb Memorial Drive",
                         "test321@gmail.com",
-                        Optional.empty());
+                        Optional.of(sampleSenateDistrict));
 
         Optional<Voter> harlan = voterDAO.getByEmail("test321@gmail.com");
         List<Voter> voters = voterDAO.all();
         assertEquals("Luke Shadler", voters.get(0).getName());
         assertEquals("Harlan Haskins", voters.get(1).getName());
         assertTrue(harlan.isPresent());
-        harlan.ifPresent((value) -> assertEquals("Harlan Haskins", value.getName()));
+        harlan.ifPresent((value) -> {
+            assertEquals("Harlan Haskins", value.getName());
+            assertEquals(2, value.getId());
+            assertNotNull(value.getPasswordHash());
+            assertEquals("test321@gmail.com", value.getEmail());
+            assertEquals("1 Lomb Memorial Drive", value.getAddress());
+            assertEquals("5857654321", value.getPhoneNumber());
+            assertEquals(1, value.getHouseDistrict().getId());
+            assertEquals(2, value.getSenateDistrict().getId());
+            assertEquals(2, value.getRepresentingDistrict().get().getId());
+            assertTrue(value.isInDistrict(sampleHouseDistrict));
+        });
     }
 
 
@@ -108,6 +130,21 @@ public class BiPollerApplicationTest extends TestCase {
     public void testCreatePoll() throws SQLException {
         districtDAO.create(1, US.NEW_YORK, CongressionalBody.HOUSE);
         districtDAO.create(2, US.NEW_YORK, CongressionalBody.SENATE);
+
+        Optional<District> districtOpt = districtDAO.getById((long)1);
+
+        districtOpt.ifPresent((district) ->
+        {
+            assertEquals(district.getId(),1);
+            assertEquals(district.getCongressionalBody(),CongressionalBody.SENATE);
+            assertEquals(district.getCongressionalBody().toString(),"Senate");
+            assertEquals(district.getState(),US.NEW_YORK);
+            assertEquals((int)district.getNumber(),(int)1);
+            assertTrue(district.isSenate());
+            assertFalse(district.isHouse());
+            assertEquals(district.getStateCode(),"NY");
+            assertEquals(district.getStateName(),"New York");
+        });
 
         voterDAO.create("Luke Shadler",
                 "pass1234",
@@ -129,6 +166,12 @@ public class BiPollerApplicationTest extends TestCase {
         List<Poll> polls = pollDAO.getPollsInDistricts(districtDAO.getById((long)1).get(),
                 districtDAO.getById((long)2).get());
         assertEquals(polls.size(),1);
+
+        Poll sample = polls.get(0);
+        assertEquals(sample.getDistrict().getId(), (long)1);
+        assertEquals(sample.getTitle(),"Cats or dogs?");
+        assertEquals(sample.getOptions().size(),2);
+        assertEquals(sample.getSubmitter().getName(),"Luke Shadler");
     }
 
     @Test
@@ -159,7 +202,7 @@ public class BiPollerApplicationTest extends TestCase {
         options.add("Dogs");
 
         pollDAO.create(voterDAO.getById((long) 1).get(), districtDAO.getById((long) 1).get(),
-                "Cats or dogs?", options);
+                "Cats or Dogs?", options);
 
         pollRecordDAO.create(pollDAO.getById((long) 1).get(), pollOptionDAO.getById((long) 1).get(),
                 voterDAO.getById((long) 2).get());
@@ -168,6 +211,16 @@ public class BiPollerApplicationTest extends TestCase {
                 pollDAO.getById((long) 1).get()).get();
 
         assertEquals(sampleRecord.getChoice().getText(), "Cats");
+        assertEquals((long)sampleRecord.getId(),(long)1);
+        assertEquals(sampleRecord.getVoter().getName(), "Harlan Haskins");
+        assertEquals(sampleRecord.getPoll().getTitle(), "Cats or Dogs?");
+
+        PollOption cats = sampleRecord.getChoice();
+
+        assertEquals(cats.getText(), "Cats");
+        assertEquals((long)cats.getId(),(long)1);
+        assertEquals((long)cats.getPollID(),(long)1);
+
     }
 
     @Test
@@ -194,8 +247,16 @@ public class BiPollerApplicationTest extends TestCase {
                 Optional.empty());
 
         tokenDAO.create(voterDAO.getByEmail("test321@gmail.com").get());
-        Optional<AccessToken> tokenLuke = tokenDAO.getByVoterID((long)1);
-        assertTrue(!tokenLuke.isPresent());
+        Optional<AccessToken> tokenLuke = tokenDAO.getByVoterID((long)2);
+
+        tokenLuke.ifPresent((value) -> {
+            assertNotNull(value.getExpiration());
+            assertNotNull(value.getUuid());
+            assertEquals(value.getVoter().getName(),"Harlan Haskins");
+            ZonedDateTime time = ZonedDateTime.now(ZoneId.of("UTC"));
+            assertFalse(value.isExpired());
+            value.setExpiration(time);
+        });
 
         tokenDAO.delete(tokenDAO.getByVoterID((long)2).get());
     }
