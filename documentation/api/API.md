@@ -53,7 +53,7 @@ It requires the following parameters:
 | `phoneNumber` | String | The user's phone number. |
 | `representingDistrictID` | Int? | The ID of the district this user represents. Optional. |
 
-It will return a fully-formed Voter object representing the added user.
+It will return an AccessToken object with a fully-formed Voter object representing the added user.
 
 ### Example
 
@@ -76,31 +76,35 @@ Response:
 
 ```json
 {
-  "id": 1,
-  "name": "Harlan Haskins",
-  "houseDistrict": {
+  "uuid": "a0180894-f9af-48ea-bbea-80d038ffb636",
+  "expiration": 1491497247.219000000,
+  "voter": {
     "id": 1,
-    "number": 1,
-    "state": "New York",
-    "house": false,
-    "senate": true
-  },
-  "senateDistrict": {
-    "id": 2,
-    "number": 2,
-    "state": "New York",
-    "house": true,
-    "senate": false
-  },
-  "phoneNumber": "8649189255",
-  "address": "1 Lomb Memorial Drive, Rochester, NY 14623",
-  "email": "harlan@csh.rit.edu",
-  "representingDistrict": {
-    "id": 2,
-    "number": 2,
-    "state": "New York",
-    "house": true,
-    "senate": false
+    "name": "Harlan Haskins",
+    "houseDistrict": {
+      "id": 1,
+      "number": 1,
+      "state": "New York",
+      "house": false,
+      "senate": true
+    },
+    "senateDistrict": {
+      "id": 2,
+      "number": 2,
+      "state": "New York",
+      "house": true,
+      "senate": false
+    },
+    "phoneNumber": "8649189255",
+    "address": "1 Lomb Memorial Drive, Rochester, NY 14623",
+    "email": "harlan@csh.rit.edu",
+    "representingDistrict": {
+      "id": 2,
+      "number": 2,
+      "state": "New York",
+      "house": true,
+      "senate": false
+    }
   }
 }
 ```

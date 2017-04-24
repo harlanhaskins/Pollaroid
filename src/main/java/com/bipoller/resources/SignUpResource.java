@@ -1,6 +1,8 @@
 package com.bipoller.resources;
+import com.bipoller.database.AccessTokenDAO;
 import com.bipoller.database.DistrictDAO;
 import com.bipoller.database.VoterDAO;
+import com.bipoller.models.AccessToken;
 import com.bipoller.models.District;
 import com.bipoller.models.Voter;
 import lombok.AllArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.Optional;
 public class SignUpResource {
     private VoterDAO voterDAO;
     private DistrictDAO districtDAO;
+    private AccessTokenDAO accessTokenDAO;
 
     public static class APIVoter {
         @NotNull
@@ -47,14 +50,15 @@ public class SignUpResource {
     }
 
     @POST
-    public Voter signUp(@Valid APIVoter voter) {
+    public AccessToken signUp(@Valid APIVoter voter) {
         try {
             District house = districtDAO.getByIdOrThrow(voter.houseDistrictID);
             District senate = districtDAO.getByIdOrThrow(voter.senateDistrictID);
             Optional<District> representing = districtDAO.getById(voter.representingDistrictID);
-            return voterDAO.create(voter.name, voter.password,
-                                   house, senate, voter.phoneNumber,
-                                   voter.address, voter.email, representing);
+            Voter v = voterDAO.create(voter.name, voter.password,
+                                      house, senate, voter.phoneNumber,
+                                      voter.address, voter.email, representing);
+            return accessTokenDAO.create(v);
         } catch (SQLException e) {
             throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
