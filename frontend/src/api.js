@@ -34,6 +34,13 @@ const api = (resource, body) => {
       }
 
       return response;
+    })
+    .catch((e) => {
+      window.notificationSystem.addNotification({
+        message: 'An unknown API error occurred',
+        level: 'error',
+      });
+      throw e;
     });
 };
 
