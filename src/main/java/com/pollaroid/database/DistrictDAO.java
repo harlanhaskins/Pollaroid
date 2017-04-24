@@ -10,8 +10,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+<<<<<<< HEAD:src/main/java/com/pollaroid/database/DistrictDAO.java
 import java.util.ArrayList;
 import java.util.List;
+=======
+>>>>>>> Initial dummy data generation:src/main/java/com/bipoller/database/DistrictDAO.java
 import java.util.Optional;
 
 /**
@@ -52,6 +55,27 @@ public class DistrictDAO extends PollaroidDAO<District, Long> {
                             US.parse(r.getString("state")),
                             r.getBoolean("is_senate") ?
                                 CongressionalBody.HOUSE : CongressionalBody.SENATE);
+    }
+
+    public Optional<District> getByFields(int number, US state, CongressionalBody body) throws SQLException {
+        PreparedStatement stmt = prepareStatementFromFile("sql/get_district_by_num_state_is_senate.sql");
+        stmt.setInt(1, number);
+        stmt.setString(2, state.getANSIAbbreviation());
+        stmt.setBoolean(3, body.isSenate());
+        ResultSet r = stmt.executeQuery();
+        if (r.next()) {
+            return Optional.of(createFromResultSet(r));
+        }
+        return Optional.empty();
+    }
+
+    public District getByFieldsOrThrow(int number, US state, CongressionalBody body) throws SQLException {
+        Optional<District> d = getByFields(number, state, body);
+        if (d.isPresent()) {
+            return d.get();
+        }
+        throw new SQLException("District not found with fields (number: " + number
+                             + ", state: " + state.getANSIAbbreviation() + ", body: " + body + ")");
     }
 
     /**
