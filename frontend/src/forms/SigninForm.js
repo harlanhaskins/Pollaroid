@@ -34,6 +34,13 @@ export default class SignupForm extends React.Component {
             redirectToVote: true,
           });
         }
+      })
+      .catch((e) => {
+        this.setState({
+          loading: false,
+        });
+
+        throw e;
       });
   }
 
