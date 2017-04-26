@@ -38,6 +38,13 @@ export default class SignupForm extends React.Component {
             level: 'success',
           });
         }
+      })
+      .catch((e) => {
+        this.setState({
+          loading: false,
+        });
+
+        throw e;
       });
   }
 
