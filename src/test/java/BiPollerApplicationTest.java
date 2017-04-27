@@ -59,7 +59,11 @@ public class BiPollerApplicationTest extends TestCase {
             assertEquals(voterDAO.getTableName(),"voter");
             assertEquals(pollDAO.getTableName(),"poll");
             assertEquals(pollOptionDAO.getTableName(),"poll_option");
+            assertEquals(pollRecordDAO.getTableName(),"poll_record");
 
+            assertEquals(tokenDAO.getTableName(),"token");
+            assertEquals(tokenDAO.getSQLGetByIdPath(),"sql/get_token_by_uuid.sql");
+            assertEquals(tokenDAO.getSQLInsertPath(),"sql/insert_token.sql");
 
 
             SQLUtils.dropEverything(server.getConnection());
@@ -68,6 +72,7 @@ public class BiPollerApplicationTest extends TestCase {
             voterDAO.createTable();
             pollDAO.createTable();
             pollOptionDAO.createTable();
+            pollOptionDAO.setPollDAO(pollDAO);
             pollRecordDAO.createTable();
             tokenDAO.createTable();
 
@@ -172,6 +177,7 @@ public class BiPollerApplicationTest extends TestCase {
         assertEquals(sample.getTitle(),"Cats or dogs?");
         assertEquals(sample.getOptions().size(),2);
         assertEquals(sample.getSubmitter().getName(),"Luke Shadler");
+        ;
     }
 
     @Test
@@ -210,6 +216,9 @@ public class BiPollerApplicationTest extends TestCase {
         PollRecord sampleRecord = pollRecordDAO.getVoterResponse(voterDAO.getById((long) 2).get(),
                 pollDAO.getById((long) 1).get()).get();
 
+        List<PollRecord> records = pollRecordDAO.getResponses(pollDAO.getById((long) 1).get());
+
+        assertEquals(records.get(0).getChoice().getId(),sampleRecord.getId());
         assertEquals(sampleRecord.getChoice().getText(), "Cats");
         assertEquals((long)sampleRecord.getId(),(long)1);
         assertEquals(sampleRecord.getVoter().getName(), "Harlan Haskins");
@@ -219,7 +228,11 @@ public class BiPollerApplicationTest extends TestCase {
 
         assertEquals(cats.getText(), "Cats");
         assertEquals((long)cats.getId(),(long)1);
-        assertEquals((long)cats.getPollID(),(long)1);
+
+        assertEquals((long)pollOptionDAO.getPoll(cats).getId(),(long)cats.getPollID());
+        pollRecordDAO.delete(pollRecordDAO.getById((long)1).get());
+        assertEquals(pollRecordDAO.getResponses(pollDAO.getById((long) 1).get()).size(),0);
+
 
     }
 
@@ -256,6 +269,18 @@ public class BiPollerApplicationTest extends TestCase {
             ZonedDateTime time = ZonedDateTime.now(ZoneId.of("UTC"));
             assertFalse(value.isExpired());
             value.setExpiration(time);
+        });
+
+        tokenLuke.ifPresent((value) -> {
+            if(value.isExpired()) {
+                try {
+                    tokenDAO.extendLifetime(value);
+                }
+                catch(SQLException e){
+                    e.printStackTrace();
+                }
+
+            }
         });
 
         tokenDAO.delete(tokenDAO.getByVoterID((long)2).get());
