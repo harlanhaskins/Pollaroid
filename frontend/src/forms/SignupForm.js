@@ -22,7 +22,7 @@ export default class SignupForm extends React.Component {
       loading: true,
     });
 
-    api('login', values)
+    api('signup', values)
       .then((data) => {
         this.setState({
           loading: false,
@@ -32,6 +32,10 @@ export default class SignupForm extends React.Component {
           auth.login(data);
           this.setState({
             redirectToVote: true,
+          });
+          window.notificationSystem.addNotification({
+            message: `Welcome to BiPoller, ${data.voter.name}!`,
+            level: 'success',
           });
         }
       })
@@ -55,6 +59,12 @@ export default class SignupForm extends React.Component {
         className='form-horizontal'
       >
         <FormGroup>
+          <Label htmlFor='name'>Name</Label>
+          <InputWrapper>
+            <Control className={INPUT_CLASS} model='.name' />
+          </InputWrapper>
+        </FormGroup>
+        <FormGroup>
           <Label htmlFor='email'>Email</Label>
           <InputWrapper>
             <Control.text className={INPUT_CLASS} model='.email' type='email' />
@@ -67,8 +77,38 @@ export default class SignupForm extends React.Component {
           </InputWrapper>
         </FormGroup>
         <FormGroup>
+          <Label htmlFor='address'>Address</Label>
+          <InputWrapper>
+            <Control className={INPUT_CLASS} model='.address' />
+          </InputWrapper>
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor='houseDistrictID'>House District</Label>
+          <InputWrapper>
+            <Control className={INPUT_CLASS} model='.houseDistrictID' type='number' />
+          </InputWrapper>
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor='senateDistrictID'>Senate District</Label>
+          <InputWrapper>
+            <Control className={INPUT_CLASS} model='.senateDistrictID' type='number' />
+          </InputWrapper>
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor='phoneNumber'>Phone Number</Label>
+          <InputWrapper>
+            <Control className={INPUT_CLASS} model='.phoneNumber' />
+          </InputWrapper>
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor='representingDistrictID'>Representing District ID (optional)</Label>
+          <InputWrapper>
+            <Control className={INPUT_CLASS} model='.representingDistrictID' type='number' />
+          </InputWrapper>
+        </FormGroup>
+        <FormGroup>
           <div className='col-sm-offset-2 col-sm-10'>
-            <button type='submit' className='btn btn-primary' disabled={this.state.loading}>Sign In</button>
+            <button type='submit' className='btn btn-primary' disabled={this.state.loading}>Sign Up</button>
           </div>
         </FormGroup>
         { this.state.loading && <Spinner /> }

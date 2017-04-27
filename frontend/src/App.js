@@ -19,7 +19,7 @@ class App extends Component {
     super();
 
     this.state = {
-      loggedIn: false,
+      loggedIn: auth.isLoggedIn(),
     };
   }
 
