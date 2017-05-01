@@ -266,12 +266,15 @@ public class BiPollerApplicationTest extends TestCase {
             assertNotNull(value.getExpiration());
             assertNotNull(value.getUuid());
             assertEquals(value.getVoter().getName(),"Harlan Haskins");
-            ZonedDateTime time = ZonedDateTime.now(ZoneId.of("UTC"));
+            ZonedDateTime time = ZonedDateTime.now(ZoneId.of("UTC")).minus(Duration.ofDays(2));
             assertFalse(value.isExpired());
             value.setExpiration(time);
         });
 
-        tokenLuke.ifPresent((value) -> {
+        Optional<AccessToken> tokenLukeUpdated = tokenDAO.getByVoterID((long)2);
+
+        tokenLukeUpdated.ifPresent((value) -> {
+            assertTrue(value.isExpired());
             if(value.isExpired()) {
                 try {
                     tokenDAO.extendLifetime(value);
