@@ -1,5 +1,7 @@
 import auth from './auth';
 
+const ALREADY_NOTIFIED = '_ALREADY_NOTIFIED_';
+
 const api = (resource, body) => {
   const options = {
     method: body ? 'POST' : 'GET',
@@ -27,13 +29,33 @@ const api = (resource, body) => {
       }
 
       if (errors.length > 0) {
+        const message = errors.join(', ');
+        const isFatal = !response.code || response.code >= 400;
         window.notificationSystem.addNotification({
-          message: errors.join(', '),
-          level: response.code < 400 ? 'success' : 'error',
+          message,
+          level: isFatal ? 'error' : 'success',
         });
+        if (isFatal) {
+          throw new Error(`${ALREADY_NOTIFIED}${message}`);
+        }
       }
 
       return response;
+    })
+    .catch((e) => {
+      if (e.message && e.message.includes(ALREADY_NOTIFIED)) {
+        // Catch the case above where we already sent
+        // a notification to the user - just pass the
+        // error along
+        e.message = e.message.replace(ALREADY_NOTIFIED, '');
+      } else {
+        window.notificationSystem.addNotification({
+          message: 'An unknown API error occurred',
+          level: 'error',
+        });
+      }
+
+      throw e;
     });
 };
 

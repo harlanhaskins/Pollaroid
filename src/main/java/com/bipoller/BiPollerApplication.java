@@ -137,7 +137,7 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
 
         environment.jersey().register(new PollResource(pollDAO, pollOptionDAO, pollRecordDAO));
         environment.jersey().register(new AuthResource(authenticator, voterDAO, tokenDAO));
-        environment.jersey().register(new SignUpResource(voterDAO, districtDAO));
+        environment.jersey().register(new SignUpResource(voterDAO, districtDAO, tokenDAO));
         environment.jersey().register(new VoterResource(voterDAO));
 
         // Enable CORS headers
