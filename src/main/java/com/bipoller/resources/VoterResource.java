@@ -23,7 +23,7 @@ public class VoterResource {
         try {
             return voterDAO.all();
         } catch (SQLException e) {
-            throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+            throw new BiPollerError(e.getMessage());
         }
     }
 }

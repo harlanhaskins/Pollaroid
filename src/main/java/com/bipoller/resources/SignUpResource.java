@@ -60,7 +60,7 @@ public class SignUpResource {
                                       voter.address, voter.email, representing);
             return accessTokenDAO.create(v);
         } catch (SQLException e) {
-            throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+            throw new BiPollerError(e.getMessage());
         }
     }
 }

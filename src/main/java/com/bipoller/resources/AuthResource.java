@@ -60,7 +60,7 @@ public class AuthResource {
             }
             return authenticator.extendOrCreateToken(voter);
         } catch (SQLException e) {
-            throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+            throw new BiPollerError(e.getMessage());
         }
     }
 
@@ -72,7 +72,7 @@ public class AuthResource {
         if (optToken.isPresent()) {
             tokenDAO.delete(optToken.get());
         } else {
-            throw new WebApplicationException("You are not logged in.", Response.Status.UNAUTHORIZED);
+            throw new BiPollerError("You are not logged in.", Response.Status.UNAUTHORIZED);
         }
     }
 }
