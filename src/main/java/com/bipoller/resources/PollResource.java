@@ -58,8 +58,14 @@ public class PollResource {
     public Poll create(@Context SecurityContext context, APIPoll apiPoll) {
         try {
             Voter voter = (Voter)context.getUserPrincipal();
-            return pollDAO.create(voter, voter.getRepresentingDistrict().get(),
-                                  apiPoll.title, apiPoll.options);
+            if(voter.getRepresentingDistrict().isPresent()) {
+                return pollDAO.create(voter, voter.getRepresentingDistrict().get(),
+                        apiPoll.title, apiPoll.options);
+            }
+            else{
+                throw new WebApplicationException("This user does not represent any districts",
+                        Response.Status.INTERNAL_SERVER_ERROR);
+            }
         } catch (SQLException e) {
             throw new WebApplicationException(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
