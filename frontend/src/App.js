@@ -12,6 +12,7 @@ import Explore from './Explore.js';
 import Signup from './Signup.js';
 import Login from './Login.js';
 import Poll from './Poll.js';
+import CreatePoll from './CreatePoll.js';
 import auth from './auth.js';
 
 class App extends Component {
@@ -49,6 +50,7 @@ class App extends Component {
           <Route exact path='/signup' component={Signup} />
           <Route exact path='/login' component={Login} />
           <Route path='/vote/:pollId' component={Poll} />
+          <Route exact path='/polls/create' component={CreatePoll} />
         </div>
       </Router>
       <NotificationSystem ref='notificationSystem' />
