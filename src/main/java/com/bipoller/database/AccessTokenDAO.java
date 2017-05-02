@@ -52,17 +52,23 @@ public class AccessTokenDAO extends BiPollerDAO<AccessToken, UUID> {
                                   ZoneId.of("UTC")));
     }
 
+    /**
+     * Sets the expiration of the access token to the provided value, and updates the database.
+     */
+    public void setExpiration(AccessToken token, ZonedDateTime expiration) throws SQLException {
+        token.setExpiration(expiration);
+        PreparedStatement stmt = prepareStatementFromFile("sql/update_token_timestamp.sql");
+        stmt.setTimestamp(1, Timestamp.from(expiration.toInstant()));
+        stmt.setString(2, token.getUuid().toString());
+        stmt.executeUpdate();
+    }
 
     /**
      * Extends the access token to expire two days later, and updates the database.
      */
     public void extendLifetime(AccessToken token) throws SQLException {
         ZonedDateTime expiration = token.getExpiration().plus(Duration.ofDays(2));
-        token.setExpiration(expiration);
-        PreparedStatement stmt = prepareStatementFromFile("sql/update_token_timestamp.sql");
-        stmt.setTimestamp(1, Timestamp.from(expiration.toInstant()));
-        stmt.setString(2, token.getUuid().toString());
-        stmt.executeUpdate();
+        setExpiration(token, expiration);
     }
 
     /**

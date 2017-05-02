@@ -65,7 +65,6 @@ public class BiPollerApplicationTest extends TestCase {
             assertEquals(tokenDAO.getSQLGetByIdPath(),"sql/get_token_by_uuid.sql");
             assertEquals(tokenDAO.getSQLInsertPath(),"sql/insert_token.sql");
 
-
             SQLUtils.dropEverything(server.getConnection());
 
             districtDAO.createTable();
@@ -268,24 +267,25 @@ public class BiPollerApplicationTest extends TestCase {
             assertEquals(value.getVoter().getName(),"Harlan Haskins");
             ZonedDateTime time = ZonedDateTime.now(ZoneId.of("UTC")).minus(Duration.ofDays(2));
             assertFalse(value.isExpired());
-            value.setExpiration(time);
+            try {
+                tokenDAO.setExpiration(value, time);
+            } catch (SQLException e) {
+                fail("Could not set expiration: " + e.getMessage());
+            }
         });
 
         Optional<AccessToken> tokenLukeUpdated = tokenDAO.getByVoterID((long)2);
 
         tokenLukeUpdated.ifPresent((value) -> {
             assertTrue(value.isExpired());
-            if(value.isExpired()) {
-                try {
-                    tokenDAO.extendLifetime(value);
-                }
-                catch(SQLException e){
-                    e.printStackTrace();
-                }
-
+            try {
+                tokenDAO.extendLifetime(value);
+            } catch (SQLException e) {
+                fail("Could not extend token lifetime: " + e.getMessage());
             }
+            assertFalse(value.isExpired());
         });
 
-        tokenDAO.delete(tokenDAO.getByVoterID((long)2).get());
+        tokenDAO.delete(tokenLuke.get());
     }
 }
