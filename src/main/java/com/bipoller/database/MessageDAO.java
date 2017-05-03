@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * A DAO for working with Message.
  */
-public class MessageDAO extends BiPollerDAO<Voter, Long> {
+public class MessageDAO extends BiPollerDAO<Message, Long> {
 
     private VoterDAO voterDAO;
 
@@ -56,25 +56,29 @@ public class MessageDAO extends BiPollerDAO<Voter, Long> {
     }
 
 
-    public List<Message> getMessageById(long id) throws SQLException {
-        PreparedStatement stmt = prepareStatementFromFile("sql/get_message_by_id.sql");
-        stmt.setLong(1, id);
-        ResultSet r = stmt.executeQuery();
-        if (r.next()) {
-            return Optional.of(createFromResultSet(r));
-        }
-        return Optional.empty();
-    }
+
 
 
     public List<Message> getRepMessagesById(long id) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile("sql/get_rep_messages.sql");
-        stmt.setLong(3, id);
+        stmt.setLong(2, id);
         ResultSet r = stmt.executeQuery();
-        if (r.next()) {
-            return Optional.of(createFromResultSet(r));
+        ArrayList<Message> messages = new ArrayList<>();
+        while (r.next()) {
+            messages.add(createFromResultSet(r));
         }
-        return Optional.empty();
+        return messages;
+    }
+
+    public List<Message> getSentMessagesById(long id) throws SQLException {
+        PreparedStatement stmt = prepareStatementFromFile("sql/get_rep_messages.sql");
+        stmt.setLong(1, id);
+        ResultSet r = stmt.executeQuery();
+        ArrayList<Message> messages = new ArrayList<>();
+        while (r.next()) {
+            messages.add(createFromResultSet(r));
+        }
+        return messages;
     }
 
     /**
@@ -82,14 +86,14 @@ public class MessageDAO extends BiPollerDAO<Voter, Long> {
      * @return A list of all messages in the database.
      * @throws SQLException If anything went wrong while executing the query.
      */
-    public List<Voter> all() throws SQLException {
+    public List<Message> all() throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile("sql/all_messages.sql");
         ResultSet results = stmt.executeQuery();
-        ArrayList<Voter> voters = new ArrayList<>();
+        ArrayList<Message> messages = new ArrayList<>();
         while (results.next()) {
-            voters.add(createFromResultSet(results));
+            messages.add(createFromResultSet(results));
         }
-        return voters;
+        return messages;
     }
 
     /**
