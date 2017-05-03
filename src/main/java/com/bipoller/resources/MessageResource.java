@@ -59,7 +59,7 @@ public class MessageResource {
 
 
     @GET
-    @Path("/{id}/inbox")
+    @Path("/inbox")
     @RolesAllowed(AuthRoles.VOTER)
     public List<Message> getInbox(@Context SecurityContext context) {
         try {
@@ -71,7 +71,7 @@ public class MessageResource {
     }
 
     @GET
-    @Path("/{id}/conversation")
+    @Path("/conversation/{id}")
     @RolesAllowed(AuthRoles.VOTER)
     public List<Message> getConversation(long voterId, @Context SecurityContext context) {
         try {
