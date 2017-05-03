@@ -5,13 +5,15 @@ import com.bipoller.database.VoterDAO;
 import com.bipoller.models.AccessToken;
 import com.bipoller.models.District;
 import com.bipoller.models.Voter;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import lombok.AllArgsConstructor;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -52,11 +54,23 @@ public class SignUpResource {
     @POST
     public AccessToken signUp(@Valid APIVoter voter) {
         try {
+            PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+            Phonenumber.PhoneNumber number;
+
+            try {
+                number = phoneUtil.parse(voter.phoneNumber, "US");
+            } catch (NumberParseException e) {
+                throw new BiPollerError("You must enter a valid US phone number.");
+            }
+
             District house = districtDAO.getByIdOrThrow(voter.houseDistrictID);
             District senate = districtDAO.getByIdOrThrow(voter.senateDistrictID);
             Optional<District> representing = districtDAO.getById(voter.representingDistrictID);
+
+            String numberStr = phoneUtil.format(number,
+                    PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
             Voter v = voterDAO.create(voter.name, voter.password,
-                                      house, senate, voter.phoneNumber,
+                                      house, senate, numberStr,
                                       voter.address, voter.email, representing);
             return accessTokenDAO.create(v);
         } catch (SQLException e) {
