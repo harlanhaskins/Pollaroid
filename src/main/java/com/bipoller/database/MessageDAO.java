@@ -81,6 +81,18 @@ public class MessageDAO extends BiPollerDAO<Message, Long> {
         return messages;
     }
 
+    public List<Message> getConversationById(long senderId, long receiverId) throws SQLException{
+        PreparedStatement stmt = prepareStatementFromFile("sql/get_message_conversation.sql");
+        stmt.setLong(1, senderId);
+        stmt.setLong(2,receiverId);
+        ResultSet r = stmt.executeQuery();
+        ArrayList<Message> messages = new ArrayList<>();
+        while (r.next()) {
+            messages.add(createFromResultSet(r));
+        }
+        return messages;
+    }
+
     /**
      * Gets a list of all voters.
      * @return A list of all messages in the database.

@@ -1,0 +1,1 @@
+select * from message where sender_id = ? and receiver_id = ?;
