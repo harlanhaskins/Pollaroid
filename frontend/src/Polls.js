@@ -39,14 +39,16 @@ class Polls extends Component {
     return <div className='container'>
       <div className='starter-template'>
         <h1>Polls</h1>
-        <p>
-          <Link to={`/polls/create`} className='btn btn-info btn-sm'>
-            <i className='fa fa-plus icon-space-r' />Create Poll
-          </Link>
-        </p>
+        { auth.isRepresentative() &&
+          <p>
+            <Link to={`/polls/create`} className='btn btn-info btn-sm'>
+              <i className='fa fa-plus icon-space-r' />Create Poll
+            </Link>
+          </p>
+        }
         { auth.isLoggedIn()
           ? <DataLoader loaded={this.state.loaded}>
-            <ApiTable data={this.state.data} detailLink />
+            <ApiTable data={this.state.data} detailLink={auth.isRepresentative()} />
           </DataLoader>
           : <p>Please log in.</p> }
       </div>
