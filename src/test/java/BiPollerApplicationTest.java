@@ -357,5 +357,13 @@ public class BiPollerApplicationTest extends TestCase {
         assertEquals(messagesRep.get(0).getText(),firstMessage.getText());
         assertEquals(messagesSentRep.get(0).getText(),"New phone who dis?");
 
+        List<Message> allMessages = messageDAO.all();
+        assertEquals(allMessages.size(),4);
+        assertEquals(messagesRep.get(0).getId(),1);
+        assertEquals(messagesRep.get(0).getFromId(),2);
+        assertEquals(messagesRep.get(0).getToId(),1);
+        assertTrue(messagesRep.get(0).getTimeSent().isBefore(messagesRep.get(1).getTimeSent()));
+
+
     }
 }
