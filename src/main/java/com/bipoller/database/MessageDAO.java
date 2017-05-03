@@ -46,13 +46,13 @@ public class MessageDAO extends BiPollerDAO<Message, Long> {
 
     @Override
     public Message createFromResultSet(ResultSet r) throws SQLException {
-
+        Timestamp ts = r.getTimestamp("time_sent");
+        ZonedDateTime utcDateTime = ZonedDateTime.ofInstant(ts.toInstant(), ZoneId.of("UTC"));
         return new Message(r.getLong("id"),
                 r.getLong("sender_id"),
                 r.getLong("reciever_id"),
                 r.getString("message_text"),
-                r.getTimestamp("time_sent"),
-                r.getString("email"));
+                utcDateTime);
     }
 
 
