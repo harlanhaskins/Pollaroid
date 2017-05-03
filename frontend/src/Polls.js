@@ -5,7 +5,7 @@ import ApiTable from './ApiTable';
 import api from './api';
 import auth from './auth';
 
-class Vote extends Component {
+class Polls extends Component {
   constructor() {
     super();
 
@@ -38,7 +38,7 @@ class Vote extends Component {
   render() {
     return <div className='container'>
       <div className='starter-template'>
-        <h1>Vote.</h1>
+        <h1>Polls</h1>
         <p>
           <Link to={`/polls/create`} className='btn btn-info btn-sm'>
             <i className='fa fa-plus icon-space-r' />Create Poll
@@ -54,4 +54,4 @@ class Vote extends Component {
   }
 }
 
-export default Vote;
+export default Polls;

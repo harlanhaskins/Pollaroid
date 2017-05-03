@@ -46,7 +46,7 @@ export default class SignupForm extends React.Component {
 
   render() {
     if (this.state.redirectToVote) {
-      return <Redirect to={'/vote'} />;
+      return <Redirect to={'/polls'} />;
     }
 
     return (
