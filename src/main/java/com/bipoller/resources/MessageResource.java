@@ -27,9 +27,6 @@ public class MessageResource {
 
     public static class APIMessage {
         @NotNull
-        public String fromEmail;
-
-        @NotNull
         public String toEmail;
 
         @NotNull
@@ -49,11 +46,11 @@ public class MessageResource {
     }
 
     @POST
-    @RolesAllowed(AuthRoles.REPRESENTATIVE)
+    @RolesAllowed(AuthRoles.VOTER)
     public Message create(@Context SecurityContext context, APIMessage apiMessage) {
         try {
-            return messageDAO.create(voterDAO.getByEmail(apiMessage.fromEmail).get(),
-                                            voterDAO.getByEmail(apiMessage.toEmail).get(),apiMessage.message);
+            Voter thisUser = (Voter)context.getUserPrincipal();
+            return messageDAO.create(thisUser, voterDAO.getByEmail(apiMessage.toEmail).get(),apiMessage.message);
         } catch (SQLException e) {
             throw new BiPollerError(e.getMessage());
         }
@@ -63,8 +60,8 @@ public class MessageResource {
 
     @GET
     @Path("/{id}/inbox")
-    @RolesAllowed(AuthRoles.REPRESENTATIVE)
-    public List<Message> userInbox(@Context SecurityContext context) {
+    @RolesAllowed(AuthRoles.VOTER)
+    public List<Message> getInbox(@Context SecurityContext context) {
         try {
             Voter voter = (Voter)context.getUserPrincipal();
             return messageDAO.getRepMessagesById(voter.getId());
@@ -72,4 +69,20 @@ public class MessageResource {
             throw new BiPollerError(e.getMessage());
         }
     }
+
+    @GET
+    @Path("/{id}/conversation")
+    @RolesAllowed(AuthRoles.VOTER)
+    public List<Message> getConversation(long voterId, @Context SecurityContext context) {
+        try {
+            Voter voter = (Voter)context.getUserPrincipal();
+            List<Message> conversation = messageDAO.getSentMessagesById(voter.getId());
+            conversation.addAll(messageDAO.getRepMessagesById(voterId));
+            return conversation;
+        } catch (SQLException e) {
+            throw new BiPollerError(e.getMessage());
+        }
+    }
+
+
 }
