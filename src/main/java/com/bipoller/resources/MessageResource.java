@@ -76,9 +76,7 @@ public class MessageResource {
     public List<Message> getConversation(long voterId, @Context SecurityContext context) {
         try {
             Voter voter = (Voter)context.getUserPrincipal();
-            List<Message> conversation = messageDAO.getSentMessagesById(voter.getId());
-            conversation.addAll(messageDAO.getRepMessagesById(voterId));
-            return conversation;
+            return messageDAO.getConversationById(voter.getId(),voterId);
         } catch (SQLException e) {
             throw new BiPollerError(e.getMessage());
         }
