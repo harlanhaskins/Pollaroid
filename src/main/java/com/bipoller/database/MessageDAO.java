@@ -26,7 +26,7 @@ public class MessageDAO extends BiPollerDAO<Message, Long> {
 
     @Override
     public String getSQLCreateTablePath() {
-        return "sql/create_mesage_table.sql";
+        return "sql/create_message_table.sql";
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MessageDAO extends BiPollerDAO<Message, Long> {
         ZonedDateTime utcDateTime = ZonedDateTime.ofInstant(ts.toInstant(), ZoneId.of("UTC"));
         return new Message(r.getLong("id"),
                 r.getLong("sender_id"),
-                r.getLong("reciever_id"),
+                r.getLong("receiver_id"),
                 r.getString("message_text"),
                 utcDateTime);
     }
@@ -61,7 +61,7 @@ public class MessageDAO extends BiPollerDAO<Message, Long> {
 
     public List<Message> getRepMessagesById(long id) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile("sql/get_rep_messages.sql");
-        stmt.setLong(2, id);
+        stmt.setLong(1, id);
         ResultSet r = stmt.executeQuery();
         ArrayList<Message> messages = new ArrayList<>();
         while (r.next()) {
@@ -71,7 +71,7 @@ public class MessageDAO extends BiPollerDAO<Message, Long> {
     }
 
     public List<Message> getSentMessagesById(long id) throws SQLException {
-        PreparedStatement stmt = prepareStatementFromFile("sql/get_rep_messages.sql");
+        PreparedStatement stmt = prepareStatementFromFile("sql/get_sent_messages.sql");
         stmt.setLong(1, id);
         ResultSet r = stmt.executeQuery();
         ArrayList<Message> messages = new ArrayList<>();
