@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import {
   BrowserRouter as Router,
-  Route
+  Route, Switch
 } from 'react-router-dom';
 import NotificationSystem from 'react-notification-system';
 
 import Navbar from './Navbar.js';
 import Home from './Home.js';
-import Vote from './Vote.js';
+import Polls from './Polls.js';
 import Explore from './Explore.js';
 import Signup from './Signup.js';
 import Login from './Login.js';
@@ -45,12 +45,14 @@ class App extends Component {
         <div>
           <Navbar loggedIn={this.state.loggedIn} />
           <Route exact path='/' component={Home} />
-          <Route exact path='/vote' component={Vote} />
           <Route exact path='/explore' component={Explore} />
           <Route exact path='/signup' component={Signup} />
           <Route exact path='/login' component={Login} />
-          <Route path='/vote/:pollId' component={Poll} />
-          <Route exact path='/polls/create' component={CreatePoll} />
+          <Route exact path='/polls' component={Polls} />
+          <Switch>
+            <Route exact path='/polls/create' component={CreatePoll} />
+            <Route path='/polls/:pollId' component={Poll} />
+          </Switch>
         </div>
       </Router>
       <NotificationSystem ref='notificationSystem' />

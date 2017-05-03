@@ -25,7 +25,7 @@ export default ({ loggedIn }) => {
     </Navbar.Header>
     <Navbar.Collapse>
       <Nav>
-        <BootstrapLink to='/vote' label='Vote' />
+        <BootstrapLink to='/polls' label='Polls' />
         <BootstrapLink to='/explore'label='Explore' />
       </Nav>
       { loggedIn && <Nav pullRight>

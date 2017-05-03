@@ -19,7 +19,7 @@ const TableBody = ({headers, data, detailLink}) => {
     {data.map((item, index) => {
       return <tr key={index}>
         { headers.map((header) => <td key={header}>{item[header] + ''}</td>) }
-        { detailLink && <td key='link'><Link to={`/vote/${item.id}`} className='btn btn-info btn-xs'>Details<span className='fa fa-chevron-right icon-space-l' /></Link></td> }
+        { detailLink && <td key='link'><Link to={`/polls/${item.id}`} className='btn btn-info btn-xs'>Details<span className='fa fa-chevron-right icon-space-l' /></Link></td> }
       </tr>;
     })}
   </tbody>;

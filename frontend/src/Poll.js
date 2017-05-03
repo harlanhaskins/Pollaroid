@@ -23,7 +23,6 @@ class Poll extends Component {
       });
   }
 
-
   render() {
     return <div className='container'>
       <div className='starter-template'>
