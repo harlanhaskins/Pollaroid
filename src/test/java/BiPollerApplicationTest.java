@@ -31,6 +31,7 @@ public class BiPollerApplicationTest extends TestCase {
     private PollOptionDAO     pollOptionDAO;
     private PollDAO           pollDAO;
     private AccessTokenDAO    tokenDAO;
+    private MessageDAO        messageDAO;
 
 
     /**
@@ -54,12 +55,14 @@ public class BiPollerApplicationTest extends TestCase {
             pollDAO       = new PollDAO(server.getConnection(),pollOptionDAO,voterDAO,districtDAO);
             pollRecordDAO = new PollRecordDAO(server.getConnection(),pollDAO,pollOptionDAO,voterDAO);
             tokenDAO      = new AccessTokenDAO(server.getConnection(),voterDAO);
+            messageDAO    = new MessageDAO(server.getConnection(),voterDAO);
 
             assertEquals(districtDAO.getTableName(),"district");
             assertEquals(voterDAO.getTableName(),"voter");
             assertEquals(pollDAO.getTableName(),"poll");
             assertEquals(pollOptionDAO.getTableName(),"poll_option");
             assertEquals(pollRecordDAO.getTableName(),"poll_record");
+            assertEquals(messageDAO.getTableName(),"message");
 
             assertEquals(tokenDAO.getTableName(),"token");
             assertEquals(tokenDAO.getSQLGetByIdPath(),"sql/get_token_by_uuid.sql");
@@ -74,6 +77,7 @@ public class BiPollerApplicationTest extends TestCase {
             pollOptionDAO.setPollDAO(pollDAO);
             pollRecordDAO.createTable();
             tokenDAO.createTable();
+            messageDAO.createTable();
 
 
             sampleHouseDistrict = districtDAO.create(1, US.NEW_YORK,
@@ -287,5 +291,71 @@ public class BiPollerApplicationTest extends TestCase {
         });
 
         tokenDAO.delete(tokenLuke.get());
+    }
+
+
+    @Test
+    public void testMessages() throws SQLException {
+
+        voterDAO.create("Luke Shadler",
+                "pass1234",
+                districtDAO.getById((long) 1).get(),
+                districtDAO.getById((long) 2).get(),
+                "5851234567",
+                "1 Lomb Memorial Drive",
+                "rep@gmail.com",
+                Optional.of(districtDAO.getById((long) 2).get()));
+
+        voterDAO.create("Harlan Haskins",
+                "pass4321",
+                districtDAO.getById((long) 1).get(),
+                districtDAO.getById((long) 2).get(),
+                "5857654321",
+                "1 Lomb Memorial Drive",
+                "test321@gmail.com",
+                Optional.empty());
+
+        voterDAO.create("Stuart Olivera",
+                "pass1234",
+                districtDAO.getById((long) 1).get(),
+                districtDAO.getById((long) 2).get(),
+                "5851234567",
+                "1 Lomb Memorial Drive",
+                "test456@gmail.com",
+                Optional.empty());
+
+        voterDAO.create("Joshua Robbins",
+                "pass4321",
+                districtDAO.getById((long) 1).get(),
+                districtDAO.getById((long) 2).get(),
+                "5857654321",
+                "1 Lomb Memorial Drive",
+                "test654@gmail.com",
+                Optional.empty());
+
+        messageDAO.create(voterDAO.getByEmail("test321@gmail.com").get(),
+                          voterDAO.getByEmail("rep@gmail.com").get(),
+                            "Hello World!");
+
+        messageDAO.create(voterDAO.getByEmail("rep@gmail.com").get(),
+                voterDAO.getByEmail("test321@gmail.com").get(),
+                "New phone who dis?");
+
+        messageDAO.create(voterDAO.getByEmail("test321@gmail.com").get(),
+                voterDAO.getByEmail("rep@gmail.com").get(),
+                "Oops, sorry!");
+
+        messageDAO.create(voterDAO.getByEmail("rep@gmail.com").get(),
+                voterDAO.getByEmail("test321@gmail.com").get(),
+                "I'm not world, I am Luke!");
+
+        Message firstMessage = messageDAO.getById((long)1).get();
+        List<Message> messagesRep = messageDAO.getRepMessagesById(
+                                            voterDAO.getByEmail("rep@gmail.com").get().getId());
+        List<Message> messagesSentRep = messageDAO.getSentMessagesById(
+                                            voterDAO.getByEmail("rep@gmail.com").get().getId());
+        assertEquals(messagesRep.get(0).getText(),firstMessage.getText());
+        assertEquals(messagesSentRep.get(0).getText(),"New phone who dis?");
+
     }
 }

@@ -1,2 +1,2 @@
-insert into message (sender_id, reciever_id, message_text, time_sent)
+insert into message (sender_id, receiver_id, message_text, time_sent)
   values (?, ?, ?, ?);

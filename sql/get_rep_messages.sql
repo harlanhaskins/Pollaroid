@@ -1,1 +1,1 @@
-select * from message where reciever_id = ?;
+select * from message where receiver_id = ?;
