@@ -51,6 +51,7 @@ public class BiPollerApplicationTest extends TestCase {
 
             districtDAO   = new DistrictDAO(server.getConnection());
             voterDAO      = new VoterDAO(server.getConnection(),districtDAO);
+            districtDAO.setVoterDAO(voterDAO);
             pollOptionDAO = new PollOptionDAO(server.getConnection());
             pollDAO       = new PollDAO(server.getConnection(),pollOptionDAO,voterDAO,districtDAO);
             pollRecordDAO = new PollRecordDAO(server.getConnection(),pollDAO,pollOptionDAO,voterDAO);
@@ -293,6 +294,29 @@ public class BiPollerApplicationTest extends TestCase {
         tokenDAO.delete(tokenLuke.get());
     }
 
+    public void testDistricts() throws SQLException {
+        District d = districtDAO.create(4, US.NEW_YORK,
+                                        CongressionalBody.HOUSE);
+        Voter v = voterDAO.create("Harlan Haskins",
+                "pass4321",
+                districtDAO.getById((long) 1).get(),
+                districtDAO.getById((long) 2).get(),
+                "5857654321",
+                "1 Lomb Memorial Drive",
+                "test321@gmail.com",
+                Optional.of(d));
+
+        Optional<Voter> rep = districtDAO.getRepresentative(d.getId());
+        if (rep.isPresent()) {
+            assertEquals(rep.get().getName(), "Harlan Haskins");
+            assertEquals(rep.get().getEmail(), "test321@gmail.com");
+        } else {
+            fail("representative not returned for getRepresentative");
+        }
+
+        List<District> districts = districtDAO.all();
+        assertEquals(districts.size(), 3);
+    }
 
     @Test
     public void testMessages() throws SQLException {

@@ -65,7 +65,9 @@ public class DistrictDAO extends BiPollerDAO<District, Long> {
         stmt.setLong(1, districtID);
         ResultSet r = stmt.executeQuery();
         if (r.next()) {
-            return Optional.of(voterDAO.createFromResultSet(r));
+            Voter v = voterDAO.createFromResultSet(r);
+
+            return Optional.ofNullable(v);
         }
         return Optional.empty();
     }
