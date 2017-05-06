@@ -109,6 +109,7 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
 
         DistrictDAO districtDAO = new DistrictDAO(getConnection());
         VoterDAO voterDAO = new VoterDAO(getConnection(), districtDAO);
+        districtDAO.setVoterDAO(voterDAO);
 
         PollOptionDAO pollOptionDAO = new PollOptionDAO(getConnection());
         PollDAO pollDAO = new PollDAO(getConnection(), pollOptionDAO, voterDAO, districtDAO);
@@ -135,6 +136,7 @@ public class BiPollerApplication extends Application<BiPollerConfiguration> {
         BiPollerAuthFilter filter = new BiPollerAuthFilter(authenticator);
         environment.jersey().register(new AuthFeature(filter));
 
+        environment.jersey().register(new DistrictResource(districtDAO));
         environment.jersey().register(new PollResource(pollDAO, pollOptionDAO, pollRecordDAO));
         environment.jersey().register(new AuthResource(authenticator, voterDAO, tokenDAO));
         environment.jersey().register(new SignUpResource(voterDAO, districtDAO, tokenDAO));

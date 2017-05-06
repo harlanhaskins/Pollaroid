@@ -1,0 +1,1 @@
+select * from voter where representing_district_id = ?;
