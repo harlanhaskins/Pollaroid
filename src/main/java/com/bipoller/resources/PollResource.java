@@ -58,7 +58,11 @@ public class PollResource {
     public Poll create(@Context SecurityContext context, APIPoll apiPoll) {
         try {
             Voter voter = (Voter)context.getUserPrincipal();
-            if(voter.getRepresentingDistrict().isPresent()) {
+            if (apiPoll.options.size() < 2) {
+                throw new BiPollerError("Polls must have at least two options.",
+                                        Response.Status.BAD_REQUEST);
+            }
+            if (voter.getRepresentingDistrict().isPresent()) {
                 return pollDAO.create(voter, voter.getRepresentingDistrict().get(),
                         apiPoll.title, apiPoll.options);
             }
