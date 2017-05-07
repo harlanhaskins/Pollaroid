@@ -54,6 +54,10 @@ public class Voter implements Principal {
         return district.getId() == getHouseDistrict().getId() || district.getId() == getSenateDistrict().getId();
     }
 
+    public boolean isRepresentative() {
+        return getRepresentingDistrict().isPresent();
+    }
+
     @JsonIgnore
     public String getPasswordHash() {
         return passwordHash;

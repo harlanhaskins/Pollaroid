@@ -52,9 +52,13 @@ public class PollRecordDAO extends BiPollerDAO<PollRecord, Long> {
     public PollRecord createFromResultSet(ResultSet r) throws SQLException {
         long id = r.getLong("id");
         Poll poll = pollDAO.getByIdOrThrow(r.getLong("poll_id"));
-        PollOption option = pollOptionDAO.getByIdOrThrow(r.getLong("option_id"));
+        Long optionID = (Long)r.getObject("option_id");
+        PollOption option = null;
+        if (optionID != null) {
+            option = pollOptionDAO.getByIdOrThrow(optionID);
+        }
         Voter voter = voterDAO.getByIdOrThrow(r.getLong("voter_id"));
-        return new PollRecord(id, poll, voter, option);
+        return new PollRecord(id, poll, voter, Optional.ofNullable(option));
     }
 
     /**
@@ -93,17 +97,31 @@ public class PollRecordDAO extends BiPollerDAO<PollRecord, Long> {
         stmt.execute();
     }
 
-    public PollRecord create(Poll poll, PollOption option, Voter voter) throws SQLException {
-        PreparedStatement stmt = prepareStatementFromFile(getSQLInsertPath());
-        stmt.setLong(1, poll.getId());
-        stmt.setLong(2, option.getId());
-        stmt.setLong(3, voter.getId());
-        stmt.executeUpdate();
+    public PollRecord create(Poll poll, PollOption option, Voter voter, boolean hasVotedOnPoll) throws SQLException {
+        return executeInTransaction(() -> {
+            PreparedStatement stmt = prepareStatementFromFile(getSQLInsertPath());
+            stmt.setLong(1, poll.getId());
 
-        ResultSet keys = stmt.getGeneratedKeys();
-        if (keys.next()) {
-            return getByIdOrThrow(keys.getLong(1));
-        }
-        throw new SQLException("PollRecord insert did not return ID");
+            if (voter.isRepresentative()) {
+                stmt.setLong(2, option.getId());
+            } else {
+                // Don't register the selected option for voters, only representatives.
+                stmt.setObject(2, null);
+            }
+
+            stmt.setLong(3, voter.getId());
+            stmt.executeUpdate();
+
+            ResultSet keys = stmt.getGeneratedKeys();
+            if (keys.next()) {
+                long id = keys.getLong(1);
+                if (!hasVotedOnPoll) {
+                    // Increment the vote count for the option before returning the new record.
+                    PollOption newOption = pollOptionDAO.incrementCount(option);
+                }
+                return getByIdOrThrow(id);
+            }
+            throw new SQLException("PollRecord insert did not return ID");
+        });
     }
 }

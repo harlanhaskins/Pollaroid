@@ -18,6 +18,9 @@ public class PollOption {
     @NonNull
     private String text;
 
+    @NonNull
+    private Long votes;
+
     public Long getId() {
         return id;
     }
@@ -28,5 +31,9 @@ public class PollOption {
 
     public String getText() {
         return text;
+    }
+
+    public Long getVotes() {
+        return votes;
     }
 }
