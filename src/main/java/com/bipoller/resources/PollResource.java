@@ -126,7 +126,7 @@ public class PollResource {
     @GET
     @Path("/top")
     @RolesAllowed(AuthRoles.VOTER)
-    public List<Poll> getTopPolls(@DefaultValue("1") @QueryParam("count") int numberOfPolls,
+    public List<Poll> getTopPolls(@DefaultValue("3") @QueryParam("count") int numberOfPolls,
                                   @Context SecurityContext context) {
         try {
             return pollDAO.getTopPolls(numberOfPolls);
