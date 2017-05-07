@@ -9,7 +9,11 @@
 * TODO
 
 ## Lucas Shadler
-* TODO
+* JUnitTest Suite
+* Backend API infrastructure (messaging and debugging)
+* Database infrastructure (messaging and debugging)
+* A few SQL query implementations
+* Amazing Poll-related puns
 
 ## Stuart Olivera
 * Front-end UI (templates, logic, iteraction)
