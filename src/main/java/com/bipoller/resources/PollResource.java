@@ -59,16 +59,15 @@ public class PollResource {
     @RolesAllowed(AuthRoles.REPRESENTATIVE)
     public Poll create(@Context SecurityContext context, APIPoll apiPoll) {
         try {
-            if(apiPoll.options.size() < 2){
+            if (apiPoll.options.size() < 2) {
                 throw new BiPollerError("A poll must be created with at least two options.",
                                                                         Response.Status.PRECONDITION_FAILED);
             }
             Voter voter = (Voter)context.getUserPrincipal();
-            if(voter.getRepresentingDistrict().isPresent()) {
+            if (voter.isRepresentative()) {
                 return pollDAO.create(voter, voter.getRepresentingDistrict().get(),
                         apiPoll.title, apiPoll.options);
-            }
-            else{
+            } else {
                 throw new BiPollerError("This user does not represent any districts.",
                                         Response.Status.UNAUTHORIZED);
             }
@@ -92,12 +91,14 @@ public class PollResource {
 
             // Delete the existing response, if any.
             Optional<PollRecord> existing = pollRecordDAO.getVoterResponse(voter, poll);
+            boolean hasVotedOnPoll = false;
             if (existing.isPresent()) {
                 pollRecordDAO.delete(existing.get());
+                hasVotedOnPoll = true;
             }
 
             PollOption option = pollOptionDAO.getByIdOrThrow(record.optionID);
-            pollRecordDAO.create(poll, option, voter);
+            pollRecordDAO.create(poll, option, voter, hasVotedOnPoll);
         } catch (SQLException e) {
             throw new BiPollerError(e.getMessage());
         }
@@ -111,11 +112,8 @@ public class PollResource {
             Voter voter = (Voter)context.getUserPrincipal();
             Poll poll = pollDAO.getByIdOrThrow(pollID);
             if (poll.getSubmitter().getId() != voter.getId()) {
-                Response response =
-                        Response.status(Response.Status.UNAUTHORIZED)
-                                .entity("You cannot get responses for a poll you did not create.")
-                                .build();
-                throw new WebApplicationException(response);
+                throw new BiPollerError("You cannot get responses for a poll you did not create.",
+                                        Response.Status.UNAUTHORIZED);
             }
             return pollRecordDAO.getResponses(poll);
         } catch (SQLException e) {

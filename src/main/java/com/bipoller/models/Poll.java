@@ -1,5 +1,6 @@
 package com.bipoller.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import java.util.List;
 
@@ -29,5 +30,14 @@ public class Poll {
 
     public String getTitle() {
         return title;
+    }
+
+    @JsonProperty
+    public long getNumberOfVotes() {
+        long sum = 0;
+        for (PollOption option : options) {
+            sum += option.getVotes();
+        }
+        return sum;
     }
 }

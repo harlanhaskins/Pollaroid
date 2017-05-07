@@ -1,0 +1,1 @@
+update poll_option set votes = votes + 1 where id = ?;

@@ -2,12 +2,14 @@ package com.bipoller.models;
 
 import lombok.AllArgsConstructor;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 public class PollRecord {
     private Long id;
     private Poll poll;
     private Voter voter;
-    private PollOption choice;
+    private Optional<PollOption> choice;
 
     public Long getId() {
         return id;
@@ -21,7 +23,7 @@ public class PollRecord {
         return voter;
     }
 
-    public PollOption getChoice() {
+    public Optional<PollOption> getChoice() {
         return choice;
     }
 }

@@ -49,7 +49,24 @@ public class PollOptionDAO extends BiPollerDAO<PollOption, Long> {
     public PollOption createFromResultSet(ResultSet r) throws SQLException {
         return new PollOption(r.getLong("id"),
                               r.getLong("poll_id"),
-                              r.getString("option"));
+                              r.getString("option"),
+                              r.getLong("votes"));
+    }
+
+    /**
+     * Increments the count for a poll option and returns the new value from the
+     * database.
+     * @param option The option you're incrementing
+     * @return The incremented option
+     * @throws SQLException If something went wrong executing the update.
+     */
+    public PollOption incrementCount(PollOption option) throws SQLException {
+        PreparedStatement stmt = prepareStatementFromFile("sql/increment_vote_count.sql");
+        stmt.setLong(1, option.getId());
+
+        stmt.executeUpdate();
+
+        return getByIdOrThrow(option.getId());
     }
 
     public PollOption create(long pollID, String option) throws SQLException {
