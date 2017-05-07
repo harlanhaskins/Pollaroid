@@ -6,7 +6,9 @@
 * SQL query implementation
 
 ## Joshua Robbins
-* TODO
+* Produced the design document
+* Produced the presentation
+* Finished random data initilization
 
 ## Lucas Shadler
 * JUnitTest Suite
