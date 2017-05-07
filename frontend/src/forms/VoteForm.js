@@ -27,6 +27,11 @@ export default class VoteForm extends React.Component {
           loading: false,
         });
 
+        window.notificationSystem.addNotification({
+          message: `Your vote has been cast!`,
+          level: 'success',
+        });
+
         this.setState({
           redirectToVote: true,
         });
