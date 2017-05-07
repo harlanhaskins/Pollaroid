@@ -112,7 +112,7 @@ public class PollaroidApplicationTest extends TestCase {
                         Optional.of(sampleSenateDistrict));
 
         Optional<Voter> harlan = voterDAO.getByEmail("test321@gmail.com");
-        List<Voter> voters = voterDAO.all();
+        List<Voter> voters = voterDAO.allInDistrict(sampleHouseDistrict.getId());
         assertEquals("Luke Shadler", voters.get(0).getName());
         assertEquals("Harlan Haskins", voters.get(1).getName());
         assertTrue(harlan.isPresent());
