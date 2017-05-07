@@ -17,6 +17,7 @@
 \usepackage{chronology}
 \usepackage{tikz}
 \usepackage{hyperref}
+\usepackage{listings}
 \usepackage{cite}
 \newcommand{\pollaroid}{\emph{Poll}aroid}
 \newcommand{\code}{\texttt}
@@ -40,8 +41,10 @@
 
 
 \section{Motivation}
+
+
 %
-%	Summary
+%	A Need for a better Polling source
 %
 \begin{frame}{Even in Modern times, Being Polled Sucks}
 \begin{itemize}
@@ -51,6 +54,9 @@
 \end{itemize}
 \end{frame}
 
+%
+%   Pollaroid!
+%
 \begin{frame}{Introducing...\pollaroid!}
 \begin{itemize}
 	\item Voters and representatives vote on representative-generated polls
@@ -60,6 +66,9 @@
 \end{itemize}
 \end{frame}
 
+%
+%   How it works
+%
 \begin{frame}{How \pollaroid works}
 \begin{itemize}
 	\item Users sign up with limited personal information and are assigned a House and Senate district
@@ -73,6 +82,9 @@
 
 \section{Implementation}
 
+%
+%   Implementation
+%
 \begin{frame}{Implementation Overview}
 \begin{itemize}
 	\item Backend
@@ -90,6 +102,10 @@
 \end{itemize}
 \end{frame}
 
+
+%
+%   ER Diagram
+%
 \begin{frame}{Entity-Relationship Diagram for \pollaroid}
 \begin{center}
 \begin{figure}[t]
@@ -98,6 +114,10 @@
 \end{center}
 \end{frame}
 
+
+%
+%   Overview
+%
 \begin{frame}{The Whole Picture}
 \begin{itemize}
 	\item \textbf{Voters} can possibly be a representative of a district
@@ -108,6 +128,10 @@
 \end{itemize}
 \end{frame}
 
+
+%
+%   Relational Algebra
+%
 \begin{frame}{A Relational Algebra Translation}
 \begin{itemize}
 	\item \code{Voter(\underline{id}, name, house\_district, senate\_distict, phone, address, email, password\_hash, password\_salt, district\_representing)}
@@ -121,6 +145,10 @@
 \blankfootnote{Underline denotes primary key} 
 \end{frame}
 
+
+%
+%   Databases
+%
 \section{Database Analysis}
 
 \begin{frame}{Functional Dependencies}
@@ -136,12 +164,27 @@
 \end{itemize}
 \end{frame}
 
+
+%
+%   Sample Query
+%
 \begin{frame}{Sample SQL Queries on \pollaroid}
-(PLACE QUERIES WHEN THEY EXIST)
+
+\begin{lstlisting}[language=SQL]
+select poll.*, count(poll_record.*) as vote_count
+  from poll left join poll_record on poll.id = poll_record.poll_id
+  group by poll.id
+  order by vote_count desc
+  limit ?;
+\end{lstlisting}
 \end{frame}
 
 \section{Demonstration}
 
+
+%
+%   Demo
+%
 \begin{frame}{Let's Try it Out!}
 \begin{center}
 \url{https://pollaroid.club/} 
@@ -150,11 +193,15 @@
 
 \section{Conclusions}
 
+
+%
+%   Summary
+%
 \begin{frame}{In Summary...}
 \begin{itemize}
-	\item \pollaroid removes the disconnection between a representative and the voters of their district
-	\item Seeing this project develop from a diagram into a functional database was a very rewarding experience
-	\item Please go to our site and respond to some of our polls!
+	\item \pollaroid removes the disconnect between a representative and the voters of their district
+	\item The aim is to promote clarity of viewpoint and popular opinion on a district-to-district basis
+	\item Please go to our site and respond to some polls!
 \end{itemize}
 \end{frame}
 
