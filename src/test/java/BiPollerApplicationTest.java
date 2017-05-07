@@ -214,21 +214,22 @@ public class BiPollerApplicationTest extends TestCase {
         pollDAO.create(voterDAO.getById((long) 1).get(), districtDAO.getById((long) 1).get(),
                 "Cats or Dogs?", options);
 
-        pollRecordDAO.create(pollDAO.getById((long) 1).get(), pollOptionDAO.getById((long) 1).get(),
-                voterDAO.getById((long) 2).get());
+        pollRecordDAO.create(pollDAO.getById((long) 1).get(),
+                pollOptionDAO.getById((long) 1).get(),
+                voterDAO.getById((long) 2).get(), false);
 
         PollRecord sampleRecord = pollRecordDAO.getVoterResponse(voterDAO.getById((long) 2).get(),
                 pollDAO.getById((long) 1).get()).get();
 
         List<PollRecord> records = pollRecordDAO.getResponses(pollDAO.getById((long) 1).get());
 
-        assertEquals(records.get(0).getChoice().getId(),sampleRecord.getId());
-        assertEquals(sampleRecord.getChoice().getText(), "Cats");
+        assertEquals(records.get(0).getChoice().get().getId(),sampleRecord.getId());
+        assertEquals(sampleRecord.getChoice().get().getText(), "Cats");
         assertEquals((long)sampleRecord.getId(),(long)1);
         assertEquals(sampleRecord.getVoter().getName(), "Harlan Haskins");
         assertEquals(sampleRecord.getPoll().getTitle(), "Cats or Dogs?");
 
-        PollOption cats = sampleRecord.getChoice();
+        PollOption cats = sampleRecord.getChoice().get();
 
         assertEquals(cats.getText(), "Cats");
         assertEquals((long)cats.getId(),(long)1);
@@ -429,11 +430,11 @@ public class BiPollerApplicationTest extends TestCase {
                 "Blue or Red?", options2);
 
         pollRecordDAO.create(pollDAO.getById((long) 1).get(), pollOptionDAO.getById((long) 1).get(),
-                voterDAO.getById((long) 1).get());
+                voterDAO.getById((long) 1).get(), false);
         pollRecordDAO.create(pollDAO.getById((long) 1).get(), pollOptionDAO.getById((long) 2).get(),
-                voterDAO.getById((long) 2).get());
+                voterDAO.getById((long) 2).get(), false);
         pollRecordDAO.create(pollDAO.getById((long) 2).get(), pollOptionDAO.getById((long) 3).get(),
-                voterDAO.getById((long) 1).get());
+                voterDAO.getById((long) 1).get(), false);
 
         List<Poll> topPoll = pollDAO.getTopPolls(1);
         assertEquals(topPoll.size(),1);
