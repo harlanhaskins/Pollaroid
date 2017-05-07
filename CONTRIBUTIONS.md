@@ -1,7 +1,9 @@
 # Pollaroid Contributions
 
 ## Harlan Haskins
-* TODO
+* Backend API infrastructure
+* Database object infrastructure
+* SQL query implementation
 
 ## Joshua Robbins
 * TODO
