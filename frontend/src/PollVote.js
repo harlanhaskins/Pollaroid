@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import api from './api';
 import auth from './auth';
 import VoteForm from './forms/VoteForm';
+import DataLoader from './DataLoader';
 import './Home.css';
 
 class PollVote extends Component {
@@ -35,7 +36,9 @@ class PollVote extends Component {
     return <div className='container'>
       <div className='starter-template'>
         { auth.isLoggedIn()
-          ? this.state.loaded ? <VoteForm poll={this.state.poll} /> : ''
+          ? <DataLoader loaded={this.state.loaded}>
+            <VoteForm poll={this.state.poll} />
+          </DataLoader>
           : <p>Please log in.</p> }
       </div>
     </div>;
