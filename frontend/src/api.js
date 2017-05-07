@@ -31,7 +31,7 @@ const api = (resource, body) => {
       if (errors.length > 0) {
         let message = errors.join(', ');
 
-        if (response.code === 401) {
+        if (response.code === 401 && message === 'HTTP 401 Unauthorized') {
           message = 'You don\'t have access to that page. Try logging in?';
         }
 
