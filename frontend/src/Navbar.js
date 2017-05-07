@@ -19,7 +19,7 @@ export default ({ loggedIn }) => {
   return <Navbar collapseOnSelect fixedTop>
     <Navbar.Header>
       <Navbar.Brand>
-        <Link to='/'>BiPoller</Link>
+        <Link to='/'>Pollaroid</Link>
       </Navbar.Brand>
       <Navbar.Toggle />
     </Navbar.Header>
