@@ -10,7 +10,9 @@ const addListener = (fn) => {
   globalAuth.listeners.push(fn);
 };
 
-const isLoggedIn = () => globalAuth.data && globalAuth.data.uuid;
+const isLoggedIn = () => !!(globalAuth.data && globalAuth.data.uuid);
+
+const isRepresentative = () => isLoggedIn() && !!(globalAuth.data.voter && globalAuth.data.voter.representingDistrict);
 
 const notifyListeners = () => {
   const loggedIn = isLoggedIn();
@@ -59,6 +61,7 @@ export default {
   logout,
   token,
   isLoggedIn,
+  isRepresentative,
   addListener,
   getData,
 };

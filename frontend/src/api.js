@@ -29,7 +29,12 @@ const api = (resource, body) => {
       }
 
       if (errors.length > 0) {
-        const message = errors.join(', ');
+        let message = errors.join(', ');
+
+        if (response.code === 401) {
+          message = 'You don\'t have access to that page. Try logging in?';
+        }
+
         const isFatal = !response.code || response.code >= 400;
         window.notificationSystem.addNotification({
           message,
