@@ -223,22 +223,17 @@ public class BiPollerApplicationTest extends TestCase {
 
         List<PollRecord> records = pollRecordDAO.getResponses(pollDAO.getById((long) 1).get());
 
-        assertEquals(records.get(0).getChoice().get().getId(),sampleRecord.getId());
-        assertEquals(sampleRecord.getChoice().get().getText(), "Cats");
+        // We shouldn't have a choice recorded for the first record, it's anonymous.
+        assertFalse(records.get(0).getChoice().isPresent());
+
+        // We shouldn't have a choice recorded for the second record, it's anonymous.
+        assertFalse(sampleRecord.getChoice().isPresent());
         assertEquals((long)sampleRecord.getId(),(long)1);
         assertEquals(sampleRecord.getVoter().getName(), "Harlan Haskins");
         assertEquals(sampleRecord.getPoll().getTitle(), "Cats or Dogs?");
 
-        PollOption cats = sampleRecord.getChoice().get();
-
-        assertEquals(cats.getText(), "Cats");
-        assertEquals((long)cats.getId(),(long)1);
-
-        assertEquals((long)pollOptionDAO.getPoll(cats).getId(),(long)cats.getPollID());
         pollRecordDAO.delete(pollRecordDAO.getById((long)1).get());
         assertEquals(pollRecordDAO.getResponses(pollDAO.getById((long) 1).get()).size(),0);
-
-
     }
 
     @Test
