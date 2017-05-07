@@ -118,8 +118,7 @@ public class PollDAO extends BiPollerDAO<Poll, Long> {
 
         ArrayList<Poll> polls = new ArrayList<>();
         while (r.next()) {
-            long thisPollId = (long)r.getLong(1);
-            polls.add(this.getById(thisPollId).get());
+            polls.add(createFromResultSet(r));
         }
         return polls;
     }
