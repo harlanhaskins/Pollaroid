@@ -23,9 +23,15 @@ class Polls extends Component {
     api('polls').then((data) => {
       // TODO: not this.
       data.forEach((item) => {
-        item.district = `${item.district.stateCode} ${item.district.congressionalBody} District ${item.district.number}`;
+        if (auth.isRepresentative()) {
+          item.district = `${item.district.stateCode} ${item.district.congressionalBody} District ${item.district.number}`;
+          item.options = item.options.map((option) => option.text).join(', ');
+        } else {
+          delete item.id;
+          delete item.district;
+          delete item.options;
+        }
         item.submitter = item.submitter.name;
-        item.options = item.options.map((option) => option.text).join(', ');
       });
 
       this.setState({
