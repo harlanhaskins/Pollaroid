@@ -37,7 +37,7 @@ export default class SignupForm extends React.Component {
             redirectToVote: true,
           });
           window.notificationSystem.addNotification({
-            message: `Welcome to BiPoller, ${data.voter.name}!`,
+            message: `Welcome to Pollaroid, ${data.voter.name}!`,
             level: 'success',
           });
         }

@@ -1,6 +1,6 @@
-# BiPoller API Reference
+# Pollaroid API Reference
 
-BiPoller is structured as a RESTful JSON API that supports secure authentication and signup.
+Pollaroid is structured as a RESTful JSON API that supports secure authentication and signup.
 All `GET`/`HEAD`/`DELETE` requests shall pass their parameters via form-encoded URL parameters.
 All `POST` routes shall pass their parameters via a JSON-encoded `POST` body.
 
@@ -8,8 +8,8 @@ The API is broken up into the following routes:
 
 ## POST `/api/login`
 
-BiPoller uses BCrypt to hash and salt passwords, and stores the hashed and salted passwords in
-the database. On `/api/login`, BiPoller will return a JSON object with the following keys.
+Pollaroid uses BCrypt to hash and salt passwords, and stores the hashed and salted passwords in
+the database. On `/api/login`, Pollaroid will return a JSON object with the following keys.
 
 | Key | Type | Description |
 | --- | ---- | ----------- |

@@ -15,7 +15,7 @@ const api = (resource, body) => {
     options.headers['Content-Type'] = 'application/json';
   }
 
-  return fetch(`https://bipoller.com/api/${resource}`, options)
+  return fetch(`https://pollaroid.club/api/${resource}`, options)
     .then((response) => {
       return response.json();
     })

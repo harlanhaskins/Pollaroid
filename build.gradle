@@ -5,7 +5,7 @@ apply plugin: 'idea'
 apply plugin: 'gradle-one-jar'
 
 def dropwizardVersion = '1.0.5'
-mainClassName = 'com.bipoller.BiPollerApplication'
+mainClassName = 'com.pollaroid.PollaroidApplication'
 
 // Add Gradle OneJar Plugin, see https://github.com/rholder/gradle-one-jar
 buildscript {
@@ -57,7 +57,7 @@ task oneJar(type: OneJar) {
 
 // Configure the run task to start the Dropwizard service
 run {
-    args 'server', './src/dist/config/bipoller.yml'
+    args 'server', './src/dist/config/pollaroid.yml'
 
 }
 

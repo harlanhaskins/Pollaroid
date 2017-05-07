@@ -1,6 +1,6 @@
 import Cookie from 'js-cookie';
 
-const COOKIE_KEY = 'bipoller_auth_info';
+const COOKIE_KEY = 'pollaroid_auth_info';
 const globalAuth = {
   data: null,
   listeners: [],
