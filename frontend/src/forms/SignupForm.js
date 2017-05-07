@@ -124,12 +124,6 @@ export default class SignupForm extends React.Component {
           </InputWrapper>
         </FormGroup>
         <FormGroup>
-          <Label htmlFor='representingDistrictID'>Representing District ID (optional)</Label>
-          <InputWrapper>
-            <Control className={INPUT_CLASS} model='.representingDistrictID' type='number' />
-          </InputWrapper>
-        </FormGroup>
-        <FormGroup>
           <div className='col-sm-offset-3 col-sm-9 col-md-offset-2 col-md-10'>
             <button type='submit' className='btn btn-primary' disabled={this.state.loading}>Sign Up</button>
           </div>
