@@ -13,6 +13,7 @@ import Signup from './Signup.js';
 import Login from './Login.js';
 import Poll from './Poll.js';
 import CreatePoll from './CreatePoll.js';
+import PollVote from './PollVote.js';
 import auth from './auth.js';
 
 class App extends Component {
@@ -51,6 +52,7 @@ class App extends Component {
           <Route exact path='/polls' component={Polls} />
           <Switch>
             <Route exact path='/polls/create' component={CreatePoll} />
+            <Route path='/polls/:pollId/vote' component={PollVote} />
             <Route path='/polls/:pollId' component={Poll} />
           </Switch>
         </div>

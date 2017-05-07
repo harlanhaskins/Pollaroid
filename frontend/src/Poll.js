@@ -16,6 +16,12 @@ class Poll extends Component {
   componentDidMount() {
     api(`polls/${this.props.match.params.pollId}/responses`)
       .then((data) => {
+        data.forEach((item) => {
+          item.poll = item.poll.title;
+          item.voter = item.voter.name;
+          item.choice = item.choice.text;
+        });
+
         this.setState({
           data,
           loaded: true,
