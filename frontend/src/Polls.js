@@ -4,6 +4,7 @@ import DataLoader from './DataLoader';
 import ApiTable from './ApiTable';
 import api from './api';
 import auth from './auth';
+import TopPolls from './TopPolls';
 
 const miscColumn = (item) => <Link to={`/polls/${item.id}/vote`} className='btn btn-info btn-xs'><i className='fa fa-archive icon-space-r' />Vote</Link>;
 
@@ -49,6 +50,7 @@ class Polls extends Component {
             </Link>
           </p>
         }
+        { auth.isLoggedIn() && <div className='top-polls'><TopPolls /></div> }
         { auth.isLoggedIn()
           ? <DataLoader loaded={this.state.loaded}>
             <ApiTable data={this.state.data} headers={headers} detailLink={auth.isRepresentative()} miscColumn={miscColumn} />
