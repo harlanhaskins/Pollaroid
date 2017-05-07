@@ -11,6 +11,7 @@
     "react-dom": "^15.4.2",
     "react-notification-system": "^0.2.13",
     "react-router-dom": "^4.0.0",
+    "recharts": "^0.22.4",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
