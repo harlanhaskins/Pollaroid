@@ -2,6 +2,7 @@ package com.pollaroid.dummydata;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -16,8 +17,6 @@ import com.pollaroid.database.VoterDAO;
 import com.pollaroid.models.CongressionalBody;
 import com.pollaroid.models.District;
 import com.pollaroid.models.Poll;
-import com.pollaroid.models.PollOption;
-import com.pollaroid.models.PollRecord;
 import com.pollaroid.models.Voter;
 
 import lombok.NonNull;
@@ -71,9 +70,17 @@ public class DummyDataDAO {
             District house = districtDAO.getByFieldsOrThrow(random.nextInt(3), state, CongressionalBody.HOUSE);
             District senate = districtDAO.getByFieldsOrThrow(random.nextInt(3), state, CongressionalBody.SENATE);
             Person person = fairy.person();
-            voterDAO.create(person.fullName(), person.password(), house, senate,
+            Voter voter = voterDAO.create(person.fullName(), person.password(), house, senate,
                     person.telephoneNumber(), person.getAddress().toString(), person.companyEmail(),
                     Optional.empty());
+            
+            List<Poll> polls = pollDAO.getPollsInDistricts(house, senate);
+            for (int ii = 0; ii < random.nextInt(4); ii++) {
+            	if (!polls.isEmpty()) {
+	            	Poll poll = polls.remove(random.nextInt(polls.size()));
+	            	pollRecordDAO.create(poll, poll.getOptions().get(random.nextInt(poll.getOptions().size())), voter, false);
+            	}
+            }
         }
     }
     
