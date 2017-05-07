@@ -17,6 +17,9 @@ const api = (resource, body) => {
 
   return fetch(`https://pollaroid.club/api/${resource}`, options)
     .then((response) => {
+      if (response.status === 204) {
+        return response.text();
+      }
       return response.json();
     })
     .then((response) => {

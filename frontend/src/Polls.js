@@ -25,14 +25,8 @@ class Polls extends Component {
     api('polls').then((data) => {
       // TODO: not this.
       data.forEach((item) => {
-        if (auth.isRepresentative()) {
-          item.district = `${item.district.stateCode} ${item.district.congressionalBody} District ${item.district.number}`;
-          item.options = item.options.map((option) => option.text).join(', ');
-        } else {
-          delete item.id;
-          delete item.district;
-          delete item.options;
-        }
+        item.district = `${item.district.stateCode} ${item.district.congressionalBody} District ${item.district.number}`;
+        item.options = item.options.map((option) => option.text).join(', ');
         item.submitter = item.submitter.name;
       });
 
@@ -44,6 +38,7 @@ class Polls extends Component {
   }
 
   render() {
+    const headers = auth.isRepresentative() ? ['id', 'title', 'district', 'options', 'submitter'] : ['title'];
     return <div className='container'>
       <div className='starter-template'>
         <h1>Polls</h1>
@@ -56,7 +51,7 @@ class Polls extends Component {
         }
         { auth.isLoggedIn()
           ? <DataLoader loaded={this.state.loaded}>
-            <ApiTable data={this.state.data} detailLink={auth.isRepresentative()} miscColumn={miscColumn} />
+            <ApiTable data={this.state.data} headers={headers} detailLink={auth.isRepresentative()} miscColumn={miscColumn} />
           </DataLoader>
           : <p>Please log in.</p> }
       </div>

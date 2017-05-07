@@ -40,7 +40,7 @@ class ApiTable extends Component {
       return <div>No data.</div>;
     }
 
-    const headers = Object.keys(this.props.data[0]);
+    const headers = this.props.headers || Object.keys(this.props.data[0]);
     return <table className='table table-striped'>
       <TableHeaders headers={headers} detailLink={this.props.detailLink} miscColumn={this.props.miscColumn} />
       <TableBody headers={headers} data={this.props.data} detailLink={this.props.detailLink} miscColumn={this.props.miscColumn} />
@@ -51,6 +51,7 @@ ApiTable.propTypes = {
   data: React.PropTypes.arrayOf(React.PropTypes.object),
   detailLink: React.PropTypes.bool,
   miscColumn: React.PropTypes.func,
+  headers: React.PropTypes.arrayOf(React.PropTypes.string),
 };
 
 export default ApiTable;
