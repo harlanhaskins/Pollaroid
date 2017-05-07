@@ -10,11 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-<<<<<<< HEAD:src/main/java/com/pollaroid/database/DistrictDAO.java
 import java.util.ArrayList;
 import java.util.List;
-=======
->>>>>>> Initial dummy data generation:src/main/java/com/bipoller/database/DistrictDAO.java
 import java.util.Optional;
 
 /**
