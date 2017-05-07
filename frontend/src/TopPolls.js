@@ -18,10 +18,6 @@ export default class TopPolls extends Component {
   getData() {
     api('polls/top')
       .then((data) => {
-        data.forEach((item) => {
-          // TODO: actual count
-          item.count = 5;
-        });
         this.setState({
           data,
         });
@@ -34,7 +30,7 @@ export default class TopPolls extends Component {
       <XAxis dataKey='title' />
       <YAxis />
       <Tooltip />
-      <Bar dataKey='count' fill='#8884d8' />
+      <Bar dataKey='numberOfVotes' fill='#8884d8' />
     </BarChart>;
   }
 }
