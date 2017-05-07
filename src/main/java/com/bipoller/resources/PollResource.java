@@ -42,6 +42,8 @@ public class PollResource {
         public Long optionID;
     }
 
+
+
     @GET
     @RolesAllowed(AuthRoles.VOTER)
     public List<Poll> all(@Context SecurityContext context) {
@@ -120,4 +122,16 @@ public class PollResource {
             throw new BiPollerError(e.getMessage());
         }
     }
+
+    @GET
+    @Path("/top-polls/?count=3")
+    @RolesAllowed(AuthRoles.VOTER)
+    public List<Poll> getTopPolls(@PathParam("count") int numberOfPolls, @Context SecurityContext context){
+        try {
+            return pollDAO.getTopPolls(numberOfPolls);
+        } catch (SQLException e){
+            throw new BiPollerError(e.getMessage());
+        }
+    }
+
 }

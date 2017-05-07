@@ -110,4 +110,17 @@ public class PollDAO extends BiPollerDAO<Poll, Long> {
             throw new SQLException("Poll insert did not return an ID");
         });
     }
+
+    public List<Poll> getTopPolls(int numberOfPolls) throws SQLException {
+        PreparedStatement stmt = prepareStatementFromFile("sql/get_top_polls.sql");
+        stmt.setInt(1, numberOfPolls);
+        ResultSet r = stmt.executeQuery();
+
+        ArrayList<Poll> polls = new ArrayList<>();
+        while (r.next()) {
+            long thisPollId = (long)r.getLong(1);
+            polls.add(this.getById(thisPollId).get());
+        }
+        return polls;
+    }
 }
