@@ -46,6 +46,11 @@ public class DistrictDAO extends PollaroidDAO<District, Long> {
     }
 
     @Override
+    public String[] getIndexPaths() {
+        return new String[] { "sql/create_district_index.sql" };
+    }
+
+    @Override
     public District createFromResultSet(ResultSet r) throws SQLException {
         return new District(r.getLong("id"),
                             r.getInt("district_num"),

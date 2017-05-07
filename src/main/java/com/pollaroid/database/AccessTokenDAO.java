@@ -42,6 +42,11 @@ public class AccessTokenDAO extends PollaroidDAO<AccessToken, UUID> {
     }
 
     @Override
+    public String[] getIndexPaths() {
+        return new String[] { "sql/create_token_index.sql" };
+    }
+
+    @Override
     public AccessToken createFromResultSet(ResultSet r) throws SQLException {
         String uuidString = r.getString("uuid");
         Timestamp expirationStamp = r.getTimestamp("expiration_date");

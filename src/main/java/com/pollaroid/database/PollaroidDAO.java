@@ -51,6 +51,11 @@ public abstract class PollaroidDAO<Data, IdType> {
     public abstract String getSQLGetByIdPath();
 
     /**
+     * @return Paths to all SQL files that create indexes for this table.
+     */
+    public abstract String[] getIndexPaths();
+
+    /**
      * Creates a Java object from the provided ResultSet. This will read the rows in the result set one-by-one
      * and return a fully-formed object from those rows.
      * @param r The ResultSet to deserialize from.
@@ -65,6 +70,17 @@ public abstract class PollaroidDAO<Data, IdType> {
      */
     public void createTable() throws SQLException {
         prepareStatementFromFile(getSQLCreateTablePath()).execute();
+        createIndices();
+    }
+
+    /**
+     * Creates all the indices for this table.
+     * @throws SQLException If the SQL failed in any way
+     */
+    public void createIndices() throws SQLException {
+        for (String path : getIndexPaths()) {
+            prepareStatementFromFile(path).execute();
+        }
     }
 
     /**

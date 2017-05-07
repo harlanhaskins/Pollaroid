@@ -49,6 +49,11 @@ public class PollRecordDAO extends PollaroidDAO<PollRecord, Long> {
     }
 
     @Override
+    public String[] getIndexPaths() {
+        return new String[] { "sql/create_poll_record_index.sql" };
+    }
+
+    @Override
     public PollRecord createFromResultSet(ResultSet r) throws SQLException {
         long id = r.getLong("id");
         Poll poll = pollDAO.getByIdOrThrow(r.getLong("poll_id"));

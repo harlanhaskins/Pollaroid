@@ -37,6 +37,11 @@ public class PollOptionDAO extends PollaroidDAO<PollOption, Long> {
         return "sql/insert_poll_option.sql";
     }
 
+    @Override
+    public String[] getIndexPaths() {
+        return new String[] { "sql/create_poll_option_index.sql" };
+    }
+
     public void setPollDAO(PollDAO pollDAO) {
         this.pollDAO = pollDAO;
     }

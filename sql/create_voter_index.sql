@@ -1,0 +1,1 @@
+create index voter_id_index on voter(id);
