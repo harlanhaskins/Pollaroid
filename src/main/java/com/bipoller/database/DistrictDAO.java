@@ -2,17 +2,25 @@ package com.bipoller.database;
 
 import com.bipoller.models.CongressionalBody;
 import com.bipoller.models.District;
+import com.bipoller.models.Voter;
+import lombok.Setter;
 import unitedstates.US;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A DAO for working with Districts.
  */
 public class DistrictDAO extends BiPollerDAO<District, Long> {
+    @Setter
+    private VoterDAO voterDAO;
+
     public DistrictDAO(Connection connection) {
         super(connection);
     }
@@ -44,6 +52,39 @@ public class DistrictDAO extends BiPollerDAO<District, Long> {
                             US.parse(r.getString("state")),
                             r.getBoolean("is_senate") ?
                                 CongressionalBody.HOUSE : CongressionalBody.SENATE);
+    }
+
+    /**
+     * Gets the representative of this district, if it has one registered.
+     * @param districtID The district whose representative you're looking up.
+     * @return The voter who is registered as a representative for this district, if there is one.
+     * @throws SQLException If there was a SQL error during the query.
+     */
+    public Optional<Voter> getRepresentative(long districtID) throws SQLException {
+        PreparedStatement stmt = prepareStatementFromFile("sql/get_rep_for_district.sql");
+        stmt.setLong(1, districtID);
+        ResultSet r = stmt.executeQuery();
+        if (r.next()) {
+            Voter v = voterDAO.createFromResultSet(r);
+
+            return Optional.ofNullable(v);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Gets all districts registered in the BiPoller database.
+     * @return A list of all districts, house and Senate.
+     * @throws SQLException if a SQL error occurred.
+     */
+    public List<District> all() throws SQLException {
+        PreparedStatement stmt = prepareStatementFromFile("sql/all_districts.sql");
+        ResultSet r = stmt.executeQuery();
+        ArrayList<District> districts = new ArrayList<>();
+        while (r.next()) {
+            districts.add(createFromResultSet(r));
+        }
+        return districts;
     }
 
     /**
