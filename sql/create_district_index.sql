@@ -1,0 +1,1 @@
+create index district_id_index on district(id);

@@ -1,0 +1,1 @@
+create index message_id_index on message(id);

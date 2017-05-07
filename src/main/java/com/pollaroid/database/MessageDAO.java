@@ -42,6 +42,11 @@ public class MessageDAO extends PollaroidDAO<Message, Long> {
     }
 
     @Override
+    public String[] getIndexPaths() {
+        return new String[] { "sql/create_message_index.sql" };
+    }
+
+    @Override
     public Message createFromResultSet(ResultSet r) throws SQLException {
         Timestamp ts = r.getTimestamp("time_sent");
         ZonedDateTime utcDateTime = ZonedDateTime.ofInstant(ts.toInstant(), ZoneId.of("UTC"));
@@ -51,10 +56,6 @@ public class MessageDAO extends PollaroidDAO<Message, Long> {
                 r.getString("message_text"),
                 utcDateTime);
     }
-
-
-
-
 
     public List<Message> getRepMessagesById(long id) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile("sql/get_rep_messages.sql");

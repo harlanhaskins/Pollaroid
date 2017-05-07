@@ -44,6 +44,11 @@ public class PollDAO extends PollaroidDAO<Poll, Long> {
         return "sql/insert_poll.sql";
     }
 
+    @Override
+    public String[] getIndexPaths() {
+        return new String[] { "sql/create_poll_index.sql" };
+    }
+
     private List<PollOption> getOptions(long id) throws SQLException {
         ArrayList<PollOption> options = new ArrayList<>();
         PreparedStatement stmt = prepareStatementFromFile("sql/get_options_for_poll.sql");

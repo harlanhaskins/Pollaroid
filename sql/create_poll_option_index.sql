@@ -1,0 +1,1 @@
+create index poll_option_id_index on poll_option(id);

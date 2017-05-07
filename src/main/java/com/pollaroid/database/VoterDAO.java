@@ -41,6 +41,11 @@ public class VoterDAO extends PollaroidDAO<Voter, Long> {
     }
 
     @Override
+    public String[] getIndexPaths() {
+        return new String[] { "sql/create_voter_index.sql" };
+    }
+
+    @Override
     public Voter createFromResultSet(ResultSet r) throws SQLException {
         long houseDistrictID  = r.getLong("house_district_id");
         long senateDistrictID = r.getLong("senate_district_id");

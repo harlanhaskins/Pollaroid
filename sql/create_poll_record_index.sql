@@ -1,0 +1,1 @@
+create index poll_record_id_index on poll_record(id);
