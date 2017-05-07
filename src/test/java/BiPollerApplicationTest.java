@@ -294,6 +294,7 @@ public class BiPollerApplicationTest extends TestCase {
         tokenDAO.delete(tokenLuke.get());
     }
 
+    @Test
     public void testDistricts() throws SQLException {
         District d = districtDAO.create(4, US.NEW_YORK,
                                         CongressionalBody.HOUSE);
@@ -389,5 +390,53 @@ public class BiPollerApplicationTest extends TestCase {
         assertTrue(messagesRep.get(0).getTimeSent().isBefore(messagesRep.get(1).getTimeSent()));
 
 
+    }
+
+    @Test
+    public void testTopPolls() throws SQLException {
+        districtDAO.create(1, US.NEW_YORK, CongressionalBody.HOUSE);
+        districtDAO.create(2, US.NEW_YORK, CongressionalBody.SENATE);
+
+        voterDAO.create("Luke Shadler",
+                "pass1234",
+                districtDAO.getById((long) 1).get(),
+                districtDAO.getById((long) 2).get(),
+                "5851234567",
+                "1 Lomb Memorial Drive",
+                "test123@gmail.com",
+                Optional.of(districtDAO.getById((long) 2).get()));
+
+        voterDAO.create("Harlan Haskins",
+                "pass4321",
+                districtDAO.getById((long) 1).get(),
+                districtDAO.getById((long) 2).get(),
+                "5857654321",
+                "1 Lomb Memorial Drive",
+                "test321@gmail.com",
+                Optional.empty());
+
+        List<String> options = new ArrayList<>();
+        options.add("Cats");
+        options.add("Dogs");
+
+        List<String> options2 = new ArrayList<>();
+        options2.add("Blue");
+        options2.add("Red");
+
+        pollDAO.create(voterDAO.getById((long) 1).get(), districtDAO.getById((long) 1).get(),
+                "Cats or Dogs?", options);
+        pollDAO.create(voterDAO.getById((long) 1).get(), districtDAO.getById((long) 1).get(),
+                "Blue or Red?", options2);
+
+        pollRecordDAO.create(pollDAO.getById((long) 1).get(), pollOptionDAO.getById((long) 1).get(),
+                voterDAO.getById((long) 1).get());
+        pollRecordDAO.create(pollDAO.getById((long) 1).get(), pollOptionDAO.getById((long) 2).get(),
+                voterDAO.getById((long) 2).get());
+        pollRecordDAO.create(pollDAO.getById((long) 2).get(), pollOptionDAO.getById((long) 3).get(),
+                voterDAO.getById((long) 1).get());
+
+        List<Poll> topPoll = pollDAO.getTopPolls(1);
+        assertEquals(topPoll.size(),1);
+        assertEquals(topPoll.get(0).getTitle(),"Cats or Dogs?");
     }
 }

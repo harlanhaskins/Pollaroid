@@ -42,6 +42,8 @@ public class PollResource {
         public Long optionID;
     }
 
+
+
     @GET
     @RolesAllowed(AuthRoles.VOTER)
     public List<Poll> all(@Context SecurityContext context) {
@@ -57,6 +59,10 @@ public class PollResource {
     @RolesAllowed(AuthRoles.REPRESENTATIVE)
     public Poll create(@Context SecurityContext context, APIPoll apiPoll) {
         try {
+            if(apiPoll.options.size() < 2){
+                throw new BiPollerError("A poll must be created with at least two options.",
+                                                                        Response.Status.PRECONDITION_FAILED);
+            }
             Voter voter = (Voter)context.getUserPrincipal();
             if(voter.getRepresentingDistrict().isPresent()) {
                 return pollDAO.create(voter, voter.getRepresentingDistrict().get(),
@@ -116,4 +122,17 @@ public class PollResource {
             throw new BiPollerError(e.getMessage());
         }
     }
+
+    @GET
+    @Path("/top")
+    @RolesAllowed(AuthRoles.VOTER)
+    public List<Poll> getTopPolls(@DefaultValue("3") @QueryParam("count") int numberOfPolls,
+                                  @Context SecurityContext context) {
+        try {
+            return pollDAO.getTopPolls(numberOfPolls);
+        } catch (SQLException e){
+            throw new BiPollerError(e.getMessage());
+        }
+    }
+
 }
