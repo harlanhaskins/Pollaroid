@@ -14,6 +14,9 @@ export default class SignupForm extends React.Component {
     this.state = {
       loading: false,
       redirectToVote: false,
+      districtsLoading: true,
+      districts: [],
+      houseChosen: null,
     };
   }
 
@@ -46,6 +49,20 @@ export default class SignupForm extends React.Component {
 
         throw e;
       });
+  }
+
+  loadDistricts() {
+    api('districts')
+      .then((data) => {
+        this.setState({
+          districtsLoading: false,
+          districts: data,
+        });
+      });
+  }
+
+  componentDidMount() {
+    this.loadDistricts();
   }
 
   render() {
@@ -85,13 +102,19 @@ export default class SignupForm extends React.Component {
         <FormGroup>
           <Label htmlFor='houseDistrictID'>House District</Label>
           <InputWrapper>
-            <Control className={INPUT_CLASS} model='.houseDistrictID' type='number' />
+            <Control.select className={INPUT_CLASS} model='.houseDistrictID' disabled={this.state.districtsLoading} title={this.state.districtsLoading ? 'Loading districts, please wait...' : ''}>
+              <option>Select one...</option>
+              { !this.state.districtsLoading && this.state.districts.filter((district) => district.house).map((district) => <option key={district.id} value={district.id}>{`${district.stateCode} ${district.congressionalBody} District ${district.number}`}</option>) }
+            </Control.select>
           </InputWrapper>
         </FormGroup>
         <FormGroup>
           <Label htmlFor='senateDistrictID'>Senate District</Label>
           <InputWrapper>
-            <Control className={INPUT_CLASS} model='.senateDistrictID' type='number' />
+            <Control.select className={INPUT_CLASS} model='.senateDistrictID' disabled={this.state.districtsLoading} title={this.state.districtsLoading ? 'Loading districts, please wait...' : ''}>
+              <option>Select one...</option>
+              { !this.state.districtsLoading && this.state.districts.filter((district) => district.senate).map((district) => <option key={district.id} value={district.id}>{`${district.stateCode} ${district.congressionalBody} District ${district.number}`}</option>) }
+            </Control.select>
           </InputWrapper>
         </FormGroup>
         <FormGroup>
