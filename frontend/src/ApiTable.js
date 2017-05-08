@@ -5,8 +5,8 @@ const TableHeaders = ({headers, detailLink, miscColumn}) => {
   return <thead>
     <tr>
       { headers.map((header) => <th key={header}>{header}</th>) }
-      { detailLink && <th key='link' /> }
       { !!miscColumn && <th key='misc' /> }
+      { detailLink && <th key='link' /> }
     </tr>
   </thead>;
 };
@@ -21,8 +21,8 @@ const TableBody = ({headers, data, detailLink, miscColumn}) => {
     {data.map((item, index) => {
       return <tr key={index}>
         { headers.map((header) => <td key={header}>{item[header] + ''}</td>) }
-        { detailLink && <td key='link'><Link to={`/polls/${item.id}`} className='btn btn-info btn-xs'>Details<span className='fa fa-chevron-right icon-space-l' /></Link></td> }
         { !!miscColumn && <td key='misc'>{miscColumn(item)}</td> }
+        { detailLink && <td key='link'><Link to={`/polls/${item.id}`} className='btn btn-info btn-xs'>Details<span className='fa fa-chevron-right icon-space-l' /></Link></td> }
       </tr>;
     })}
   </tbody>;
