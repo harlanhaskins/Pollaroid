@@ -41,14 +41,14 @@ for the database. To run the server, just run:
 ./gradlew run
 ```
 
-This will run the server locally on port 8080.
+This will run the server at `http://localhost:8080`.
 
 ### Building the Web Frontend
 
 The web frontend is a React web application that's built using `webpack`. To
-install all the dependencies necessary for the frontend, ensure you have `npm`
-installed and available in your PATH, then navigate to the
-`frontend` directory and run:
+install all the dependencies necessary for the frontend, ensure you have
+[Node.js](https://nodejs.org/en/download/) installed and available in your
+PATH, then navigate to the `frontend` directory and run:
 
 ```bash
 npm install
