@@ -33,7 +33,7 @@ class Poll extends Component {
   render() {
     return <div className='container'>
       <div className='starter-template'>
-        <h1>Poll.</h1>
+        <h1>Poll</h1>
         <DataLoader loaded={this.state.loaded}>
           <ApiTable data={this.state.data} />
         </DataLoader>
