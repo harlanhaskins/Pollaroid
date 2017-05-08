@@ -389,7 +389,7 @@ public class PollaroidApplicationTest extends TestCase {
         districtDAO.create(1, US.NEW_YORK, CongressionalBody.HOUSE);
         districtDAO.create(2, US.NEW_YORK, CongressionalBody.SENATE);
 
-        voterDAO.create("Luke Shadler",
+        Voter luke = voterDAO.create("Luke Shadler",
                 "pass1234",
                 districtDAO.getById((long) 1).get(),
                 districtDAO.getById((long) 2).get(),
@@ -427,8 +427,8 @@ public class PollaroidApplicationTest extends TestCase {
         pollRecordDAO.create(pollDAO.getById((long) 2).get(), pollOptionDAO.getById((long) 3).get(),
                 voterDAO.getById((long) 1).get(), false);
 
-        List<Poll> topPoll = pollDAO.getTopPolls(1);
-        assertEquals(topPoll.size(),1);
+        List<Poll> topPoll = pollDAO.getTopPolls(1, luke);
+        assertEquals(topPoll.size(), 1);
         assertEquals(topPoll.get(0).getTitle(),"Cats or Dogs?");
     }
 }
