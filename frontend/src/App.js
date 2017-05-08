@@ -14,6 +14,7 @@ import Login from './Login.js';
 import Poll from './Poll.js';
 import CreatePoll from './CreatePoll.js';
 import PollVote from './PollVote.js';
+import Voters from './Voters.js';
 import auth from './auth.js';
 
 class App extends Component {
@@ -55,6 +56,7 @@ class App extends Component {
             <Route path='/polls/:pollId/vote' component={PollVote} />
             <Route path='/polls/:pollId' component={Poll} />
           </Switch>
+          <Route exact path='/voters' component={Voters} />
         </div>
       </Router>
       <NotificationSystem ref='notificationSystem' />
