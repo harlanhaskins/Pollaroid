@@ -1,0 +1,1 @@
+select * from voter where house_district_id = ? or senate_district_id = ?;

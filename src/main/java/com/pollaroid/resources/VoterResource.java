@@ -18,10 +18,15 @@ public class VoterResource {
     private VoterDAO voterDAO;
 
     @GET
-    @RolesAllowed(AuthRoles.VOTER)
-    public List<Voter> voters() {
+    @RolesAllowed(AuthRoles.REPRESENTATIVE)
+    public List<Voter> voters(@Context SecurityContext context) {
         try {
-            return voterDAO.all();
+            Voter v = (Voter)context.getUserPrincipal();
+            if (v.getRepresentingDistrict().isPresent()) {
+                return voterDAO.allInDistrict(v.getRepresentingDistrict().get().getId());
+            }
+            throw new PollaroidError("You cannot get voters if you are not a representative.",
+                    Response.Status.UNAUTHORIZED);
         } catch (SQLException e) {
             throw new PollaroidError(e.getMessage());
         }

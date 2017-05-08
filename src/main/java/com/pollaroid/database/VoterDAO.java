@@ -92,8 +92,10 @@ public class VoterDAO extends PollaroidDAO<Voter, Long> {
      * @return A list of all voters in the database.
      * @throws SQLException If anything went wrong while executing the query.
      */
-    public List<Voter> all() throws SQLException {
-        PreparedStatement stmt = prepareStatementFromFile("sql/all_voters.sql");
+    public List<Voter> allInDistrict(long districtID) throws SQLException {
+        PreparedStatement stmt = prepareStatementFromFile("sql/all_voters_in_district.sql");
+        stmt.setLong(1, districtID);
+        stmt.setLong(2, districtID);
         ResultSet results = stmt.executeQuery();
         ArrayList<Voter> voters = new ArrayList<>();
         while (results.next()) {
