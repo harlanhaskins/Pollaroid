@@ -427,8 +427,8 @@ public class PollaroidApplicationTest extends TestCase {
         pollRecordDAO.create(pollDAO.getById((long) 2).get(), pollOptionDAO.getById((long) 3).get(),
                 voterDAO.getById((long) 1).get(), false);
 
-        List<Poll> topPoll = pollDAO.getTopPolls(1, luke);
+        List<PollDAO.TopPollListing> topPoll = pollDAO.getTopPolls(1, luke);
         assertEquals(topPoll.size(), 1);
-        assertEquals(topPoll.get(0).getTitle(),"Cats or Dogs?");
+        assertEquals(topPoll.get(0).poll.getTitle(),"Cats or Dogs?");
     }
 }

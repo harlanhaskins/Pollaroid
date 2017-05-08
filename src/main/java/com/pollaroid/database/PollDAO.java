@@ -1,6 +1,7 @@
 package com.pollaroid.database;
 
 import com.pollaroid.models.*;
+import lombok.AllArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -116,16 +117,24 @@ public class PollDAO extends PollaroidDAO<Poll, Long> {
         });
     }
 
-    public List<Poll> getTopPolls(int numberOfPolls, Voter voter) throws SQLException {
+    @AllArgsConstructor
+    public class TopPollListing {
+        public Poll poll;
+        public String mostPopularOption;
+    }
+
+    public List<TopPollListing> getTopPolls(int numberOfPolls, Voter voter) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile("sql/get_top_polls.sql");
         stmt.setLong(1, voter.getHouseDistrict().getId());
         stmt.setLong(2, voter.getSenateDistrict().getId());
         stmt.setInt(3, numberOfPolls);
         ResultSet r = stmt.executeQuery();
 
-        ArrayList<Poll> polls = new ArrayList<>();
+        ArrayList<TopPollListing> polls = new ArrayList<>();
         while (r.next()) {
-            polls.add(createFromResultSet(r));
+            Poll p = createFromResultSet(r);
+            String option = r.getString("popular_option");
+            polls.add(new TopPollListing(p, option));
         }
         return polls;
     }
