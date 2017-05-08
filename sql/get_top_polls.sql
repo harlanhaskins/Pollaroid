@@ -5,7 +5,8 @@ select
    from poll_option
    where poll_option.poll_id = poll.id
    order by votes desc limit 1) as popular_option
-from poll left join poll_record on poll.id = poll_record.poll_id
+from (poll left join poll_record on poll.id = poll_record.poll_id)
+where poll.district_id in (?,?)
 group by poll.id
 order by vote_count desc
 limit ?;
