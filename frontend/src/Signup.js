@@ -5,7 +5,7 @@ class Signup extends Component {
   render() {
     return <div className='container'>
       <div className='starter-template'>
-        <h1>Sign up.</h1>
+        <h1>Sign up</h1>
         <br />
         <SignupForm />
       </div>
