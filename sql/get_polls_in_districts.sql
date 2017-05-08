@@ -1,1 +1,1 @@
-select * from poll where id in (?, ?);
+select * from poll where district_id in (?, ?);
