@@ -118,8 +118,8 @@ public class PollDAO extends PollaroidDAO<Poll, Long> {
 
     public List<Poll> getTopPolls(int numberOfPolls, Voter voter) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile("sql/get_top_polls.sql");
-        stmt.setLong(1, voter.getId());
-        stmt.setLong(2, voter.getId());
+        stmt.setLong(1, voter.getHouseDistrict().getId());
+        stmt.setLong(2, voter.getSenateDistrict().getId());
         stmt.setInt(3, numberOfPolls);
         ResultSet r = stmt.executeQuery();
 

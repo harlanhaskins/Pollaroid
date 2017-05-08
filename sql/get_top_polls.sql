@@ -8,7 +8,7 @@ select
 from (
 	select *
 	from (poll left join poll_record on poll.id = poll_record.poll_id)
-	where poll.district_id in ((select house_district_id from voter where voter.id = ?) union (select senate_district_id from voter where voter.id = ?))
+	where poll.district_id in (?,?)
 )
 group by poll.id
 order by vote_count desc
