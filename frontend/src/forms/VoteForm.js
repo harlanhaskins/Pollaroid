@@ -51,7 +51,6 @@ export default class VoteForm extends React.Component {
 
     return (
       <LocalForm
-        onSubmit={(values) => this.handleSubmit(values)}
         className='form-horizontal'
       >
         <FormGroup>
@@ -59,12 +58,7 @@ export default class VoteForm extends React.Component {
         </FormGroup>
         <FormGroup>
           <div className='col-xs-12'>
-            { this.props.poll.options.map((option) => <Radio model='.optionID' value={option.id} key={option.id}>{option.text}</Radio>) }
-          </div>
-        </FormGroup>
-        <FormGroup>
-          <div className='col-xs-12'>
-            <button type='submit' className='btn btn-primary' disabled={this.state.loading}>Vote!</button>
+            { this.props.poll.options.map((option) => <p key={option.id}><button className='btn btn-primary' onClick={() => this.handleSubmit({optionID: option.id})}>{option.text}</button></p>) }
           </div>
         </FormGroup>
         { this.state.loading && <Spinner /> }
