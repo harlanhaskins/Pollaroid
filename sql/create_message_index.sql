@@ -1,1 +1,1 @@
-create index message_id_index on message(id);
+create index if not exists message_id_index on message(id);

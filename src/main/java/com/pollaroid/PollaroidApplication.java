@@ -106,8 +106,6 @@ public class PollaroidApplication extends Application<PollaroidConfiguration> {
 
     @Override
     public void run(PollaroidConfiguration configuration, Environment environment) throws Exception {
-        SQLUtils.dropEverything(getConnection());
-
         DistrictDAO districtDAO = new DistrictDAO(getConnection());
         VoterDAO voterDAO = new VoterDAO(getConnection(), districtDAO);
         districtDAO.setVoterDAO(voterDAO);
@@ -125,10 +123,6 @@ public class PollaroidApplication extends Application<PollaroidConfiguration> {
         pollOptionDAO.createTable();
         pollRecordDAO.createTable();
         tokenDAO.createTable();
-
-        DummyDataDAO dummyDataDAO = new DummyDataDAO(voterDAO, districtDAO, pollDAO,
-                                                     pollOptionDAO, pollRecordDAO);
-        dummyDataDAO.generateData();
 
         environment.jersey().setUrlPattern("/api/*");
 
