@@ -8,7 +8,6 @@ import NotificationSystem from 'react-notification-system';
 import Navbar from './Navbar.js';
 import Home from './Home.js';
 import Polls from './Polls.js';
-import Explore from './Explore.js';
 import Signup from './Signup.js';
 import Login from './Login.js';
 import Poll from './Poll.js';
