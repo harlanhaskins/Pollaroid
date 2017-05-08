@@ -55,5 +55,5 @@ npm install
 npm run build
 ```
 
-Then you should be able to open `frontend/build/index.html` and poke around the
-frontend.
+Then you should be able to navigate to `http://localhost:8080` and poke around
+the frontend.
