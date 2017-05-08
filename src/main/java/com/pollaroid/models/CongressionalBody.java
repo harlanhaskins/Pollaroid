@@ -19,4 +19,18 @@ public enum CongressionalBody {
         }
         return null;
     }
+
+    /**
+     * Whether this body is the SENATE.
+     */
+    public boolean isSenate() {
+        return this == SENATE;
+    }
+
+    /**
+     * Whether this body is the HOUSE.
+     */
+    public boolean isHouse() {
+        return this == HOUSE;
+    }
 }

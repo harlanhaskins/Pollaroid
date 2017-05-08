@@ -3,6 +3,7 @@ package com.pollaroid;
 import com.pollaroid.auth.AuthFeature;
 import com.pollaroid.auth.PollaroidAuthFilter;
 import com.pollaroid.auth.PollaroidAuthenticator;
+import com.pollaroid.dummydata.*;
 import com.pollaroid.database.*;
 import com.pollaroid.models.*;
 import com.pollaroid.resources.*;
@@ -125,10 +126,9 @@ public class PollaroidApplication extends Application<PollaroidConfiguration> {
         pollRecordDAO.createTable();
         tokenDAO.createTable();
 
-        District house = districtDAO.create(1, US.NEW_YORK, CongressionalBody.HOUSE);
-        District senate = districtDAO.create(2, US.NEW_YORK, CongressionalBody.SENATE);
-        System.out.println("created House with ID: " + house.getId());
-        System.out.println("created Senate with ID: " + senate.getId());
+        DummyDataDAO dummyDataDAO = new DummyDataDAO(voterDAO, districtDAO, pollDAO,
+                                                     pollOptionDAO, pollRecordDAO);
+        dummyDataDAO.generateData();
 
         environment.jersey().setUrlPattern("/api/*");
 
