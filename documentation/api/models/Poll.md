@@ -9,6 +9,7 @@ It contains the following keys:
 | `title` | String | The title of the poll. |
 | `submitter` | Voter | The Representative who submitted the poll. |
 | `options` | [PollOption] | The available options for the poll. This will not be empty. |
+| `numberOfVotes` | Int | The total number of votes on this poll. |
 
 Example:
 
@@ -68,6 +69,7 @@ Example:
      "id": 3,
      "text": "Abstain"
    }
- ]
+ ],
+ "numberOfVotes": 1
 }
 ```

@@ -124,12 +124,12 @@ public class PollResource {
     @GET
     @Path("/top")
     @RolesAllowed(AuthRoles.VOTER)
-    public List<Poll> getTopPolls(@DefaultValue("3") @QueryParam("count") int numberOfPolls,
-                                  @Context SecurityContext context) {
+    public List<PollDAO.TopPollListing> getTopPolls(@DefaultValue("3") @QueryParam("count") int numberOfPolls,
+                                             @Context SecurityContext context) {
         try {
         	Voter voter = (Voter)context.getUserPrincipal();
             return pollDAO.getTopPolls(numberOfPolls, voter);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             throw new PollaroidError(e.getMessage());
         }
     }

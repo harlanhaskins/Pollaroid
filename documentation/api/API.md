@@ -329,6 +329,108 @@ Response:
 }
 ```
 
+## GET `/api/polls/top?count=:count`
+
+This will get a list of the top responded polls in your district.
+
+It accepts the following optional query parameters:
+
+| Key | Type | Description |
+| --- | ---- | ----------- |
+| `count` | Int | The maximum number of polls to return (default is 3) |
+
+It will return a list of objects, each of which have the following keys:
+
+| Key | Type | Description |
+| --- | ---- | ----------- |
+| `poll` | Poll | The full Poll |
+| `mostPopularOption` | String | The option of this poll with the most votes. |
+
+### Example
+
+Request:
+
+`GET /api/polls/top?count=3`
+
+Response: 
+```json
+[
+  {
+    "poll": {
+      "id": 1,
+      "submitter": {
+        "id": 3,
+        "name": "Harlan Haskins",
+        "phoneNumber": "+1 864-918-9255",
+        "address": "1 Lomb Memorial Drive, Rochester, NY 14623",
+        "email": "harlan@csh.rit.edu",
+        "houseDistrict": {
+          "id": 1,
+          "number": 1,
+          "congressionalBody": "Senate",
+          "stateName": "New York",
+          "house": false,
+          "stateCode": "NY",
+          "senate": true
+        },
+        "senateDistrict": {
+          "id": 2,
+          "number": 2,
+          "congressionalBody": "House",
+          "stateName": "New York",
+          "house": true,
+          "stateCode": "NY",
+          "senate": false
+        },
+        "representingDistrict": {
+          "id": 2,
+          "number": 2,
+          "congressionalBody": "House",
+          "stateName": "New York",
+          "house": true,
+          "stateCode": "NY",
+          "senate": false
+        },
+        "representative": true
+      },
+      "district": {
+        "id": 2,
+        "number": 2,
+        "congressionalBody": "House",
+        "stateName": "New York",
+        "house": true,
+        "stateCode": "NY",
+        "senate": false
+      },
+      "title": "How should I vote on HR1136?",
+      "options": [
+        {
+          "id": 1,
+          "pollID": 1,
+          "text": "Yes",
+          "votes": 0
+        },
+        {
+          "id": 2,
+          "pollID": 1,
+          "text": "No",
+          "votes": 0
+        },
+        {
+          "id": 3,
+          "pollID": 1,
+          "text": "Abstain",
+          "votes": 0
+        }
+      ],
+      "numberOfVotes": 0
+    },
+    "mostPopularOption": "Yes",
+    "numberOfVotes": 1
+  }
+]
+```
+
 ## POST `/api/polls/:id/responses`
 
 This will record a response to the provided Poll.
