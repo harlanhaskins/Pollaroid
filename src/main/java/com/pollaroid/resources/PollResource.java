@@ -123,11 +123,12 @@ public class PollResource {
 
 
     @GET
-    @Path("/results")
+    @Path("/{id}/results")
     @RolesAllowed(AuthRoles.VOTER)
-    public List<PollRecord> allResponses(@Context SecurityContext context) {
+    public List<PollRecord> allResponses(@PathParam("id") long pollID,@Context SecurityContext context) {
         try {
-            return pollRecordDAO.getAllResponses();
+            Poll poll = pollDAO.getByIdOrThrow(pollID);
+            return pollRecordDAO.getResponses(poll);
         } catch (SQLException e) {
             throw new PollaroidError(e.getMessage());
         }
