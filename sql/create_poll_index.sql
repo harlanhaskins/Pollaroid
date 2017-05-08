@@ -1,1 +1,1 @@
-create index poll_id_index on poll(id);
+create index if not exists poll_id_index on poll(id);

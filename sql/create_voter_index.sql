@@ -1,1 +1,1 @@
-create index voter_id_index on voter(id);
+create index if not exists voter_id_index on voter(id);

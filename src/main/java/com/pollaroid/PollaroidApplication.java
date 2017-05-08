@@ -3,6 +3,7 @@ package com.pollaroid;
 import com.pollaroid.auth.AuthFeature;
 import com.pollaroid.auth.PollaroidAuthFilter;
 import com.pollaroid.auth.PollaroidAuthenticator;
+import com.pollaroid.dummydata.*;
 import com.pollaroid.database.*;
 import com.pollaroid.models.*;
 import com.pollaroid.resources.*;
@@ -105,8 +106,6 @@ public class PollaroidApplication extends Application<PollaroidConfiguration> {
 
     @Override
     public void run(PollaroidConfiguration configuration, Environment environment) throws Exception {
-        SQLUtils.dropEverything(getConnection());
-
         DistrictDAO districtDAO = new DistrictDAO(getConnection());
         VoterDAO voterDAO = new VoterDAO(getConnection(), districtDAO);
         districtDAO.setVoterDAO(voterDAO);
@@ -124,11 +123,6 @@ public class PollaroidApplication extends Application<PollaroidConfiguration> {
         pollOptionDAO.createTable();
         pollRecordDAO.createTable();
         tokenDAO.createTable();
-
-        District house = districtDAO.create(1, US.NEW_YORK, CongressionalBody.HOUSE);
-        District senate = districtDAO.create(2, US.NEW_YORK, CongressionalBody.SENATE);
-        System.out.println("created House with ID: " + house.getId());
-        System.out.println("created Senate with ID: " + senate.getId());
 
         environment.jersey().setUrlPattern("/api/*");
 

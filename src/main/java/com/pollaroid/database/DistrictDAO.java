@@ -59,6 +59,27 @@ public class DistrictDAO extends PollaroidDAO<District, Long> {
                                 CongressionalBody.HOUSE : CongressionalBody.SENATE);
     }
 
+    public Optional<District> getByFields(int number, US state, CongressionalBody body) throws SQLException {
+        PreparedStatement stmt = prepareStatementFromFile("sql/get_district_by_num_state_is_senate.sql");
+        stmt.setInt(1, number);
+        stmt.setString(2, state.getANSIAbbreviation());
+        stmt.setBoolean(3, body.isSenate());
+        ResultSet r = stmt.executeQuery();
+        if (r.next()) {
+            return Optional.of(createFromResultSet(r));
+        }
+        return Optional.empty();
+    }
+
+    public District getByFieldsOrThrow(int number, US state, CongressionalBody body) throws SQLException {
+        Optional<District> d = getByFields(number, state, body);
+        if (d.isPresent()) {
+            return d.get();
+        }
+        throw new SQLException("District not found with fields (number: " + number
+                             + ", state: " + state.getANSIAbbreviation() + ", body: " + body + ")");
+    }
+
     /**
      * Gets the representative of this district, if it has one registered.
      * @param districtID The district whose representative you're looking up.

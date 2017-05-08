@@ -1,1 +1,1 @@
-create index district_id_index on district(id);
+create index if not exists district_id_index on district(id);
