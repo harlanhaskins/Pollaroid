@@ -114,6 +114,7 @@ public class PollaroidApplication extends Application<PollaroidConfiguration> {
         PollDAO pollDAO = new PollDAO(getConnection(), pollOptionDAO, voterDAO, districtDAO);
         pollOptionDAO.setPollDAO(pollDAO);
         PollRecordDAO pollRecordDAO = new PollRecordDAO(getConnection(), pollDAO, pollOptionDAO, voterDAO);
+        MessageDAO messageDAO = new MessageDAO(getConnection(), voterDAO);
 
         AccessTokenDAO tokenDAO = new AccessTokenDAO(getConnection(), voterDAO);
 
@@ -121,6 +122,7 @@ public class PollaroidApplication extends Application<PollaroidConfiguration> {
         voterDAO.createTable();
         pollDAO.createTable();
         pollOptionDAO.createTable();
+        messageDAO.createTable();
         pollRecordDAO.createTable();
         tokenDAO.createTable();
 
@@ -130,6 +132,7 @@ public class PollaroidApplication extends Application<PollaroidConfiguration> {
         PollaroidAuthFilter filter = new PollaroidAuthFilter(authenticator);
         environment.jersey().register(new AuthFeature(filter));
 
+        environment.jersey().register(new MessageResource(messageDAO, voterDAO));
         environment.jersey().register(new DistrictResource(districtDAO));
         environment.jersey().register(new PollResource(pollDAO, pollOptionDAO, pollRecordDAO));
         environment.jersey().register(new AuthResource(authenticator, voterDAO, tokenDAO));
