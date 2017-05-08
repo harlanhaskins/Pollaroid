@@ -127,7 +127,8 @@ public class PollResource {
     public List<Poll> getTopPolls(@DefaultValue("3") @QueryParam("count") int numberOfPolls,
                                   @Context SecurityContext context) {
         try {
-            return pollDAO.getTopPolls(numberOfPolls);
+        	Voter voter = (Voter)context.getUserPrincipal();
+            return pollDAO.getTopPolls(numberOfPolls, voter);
         } catch (SQLException e){
             throw new PollaroidError(e.getMessage());
         }
