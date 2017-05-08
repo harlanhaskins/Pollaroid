@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import DataLoader from './DataLoader';
 import ApiTable from './ApiTable';
+import PollResults from './PollResults';
 import api from './api';
 
 class Poll extends Component {
@@ -34,6 +35,7 @@ class Poll extends Component {
     return <div className='container'>
       <div className='starter-template'>
         <h1>Poll</h1>
+        { this.state.loaded && <PollResults data={this.state.data} /> }
         <DataLoader loaded={this.state.loaded}>
           <ApiTable data={this.state.data} />
         </DataLoader>
