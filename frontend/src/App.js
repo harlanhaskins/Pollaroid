@@ -47,7 +47,6 @@ class App extends Component {
         <div>
           <Navbar loggedIn={this.state.loggedIn} />
           <Route exact path='/' component={Home} />
-          <Route exact path='/explore' component={Explore} />
           <Route exact path='/signup' component={Signup} />
           <Route exact path='/login' component={Login} />
           <Route exact path='/polls' component={Polls} />
