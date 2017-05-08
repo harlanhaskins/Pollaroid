@@ -13,13 +13,11 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
-\usepackage[absolute,overlay]{textpos}
 \usepackage{chronology}
-\usepackage{tikz}
 \usepackage{hyperref}
 \usepackage{listings}
 \usepackage{cite}
-\newcommand{\pollaroid}{\emph{Poll}aroid}
+\newcommand{\pollaroid}{POLLaroid}
 \newcommand{\code}{\texttt}
 \newcommand\blankfootnote[1]{%
   \let\thefootnote\relax\footnotetext{#1}%
@@ -27,12 +25,12 @@
 }
 \author{Harlan Haskins\\Joshua Robbins\\Stuart Olivera\\Luke Shadler}
 \title{\pollaroid : Polling for the People!}
-%\setbeamercovered{transparent} 
-%\setbeamertemplate{navigation symbols}{} 
-%\logo{} 
-\institute{Rochester Institute of Technology} 
-%\date{} 
-%\subject{} 
+%\setbeamercovered{transparent}
+%\setbeamertemplate{navigation symbols}{}
+%\logo{}
+\institute{Rochester Institute of Technology}
+%\date{}
+%\subject{}
 \begin{document}
 
 \begin{frame}
@@ -46,7 +44,7 @@
 %
 %	A Need for a better Polling source
 %
-\begin{frame}{Being Polled Sucks}
+\begin{frame}{Need for Something New}
 \begin{itemize}
 	\item Untimely or unwanted calls
 	\item Voicing an opinion to a representative is lost in cyberspace
@@ -91,7 +89,7 @@
 	\begin{itemize}
 		\item A Java server application
 		\item Uses SQL API with H2
-		\item Dropwizard\footnote{\url{http://www.dropwizard.io/1.1.0/docs/}} allows communication with front end 
+		\item Dropwizard\footnote{\url{http://www.dropwizard.io/1.1.0/docs/}} allows communication with front end
 	\end{itemize}
 	\item Frontend
 	\begin{itemize}
@@ -142,7 +140,7 @@
 	\item \code{Message(\underline{id}, from, to, text, time\_sent)}
 \end{itemize}
 
-\blankfootnote{Underline denotes primary key} 
+\blankfootnote{Underline denotes primary key}
 \end{frame}
 
 
@@ -169,8 +167,8 @@
 %   Sample Query
 %
 \begin{frame}[fragile]{Sample SQL Queries on \pollaroid}
-
-\begin{lstlisting}[language=SQL]
+Query to get the most popular option from top polls  in a given district:
+\begin{lstlisting}[language=SQL,basicstyle=\small]
 select
   poll.*,
   count(poll_record.*) as vote_count,
@@ -193,9 +191,9 @@ limit ?;
 %
 %   Demo
 %
-\begin{frame}{Let's Try it Out!}
+\begin{frame}[t]{Let's Try it Out!}
 \begin{center}
-\url{https://pollaroid.club/} 
+\href{https://pollaroid.club/}{\includegraphics[scale=0.12]{Pollaroid.png}}
 \end{center}
 \end{frame}
 
@@ -207,14 +205,14 @@ limit ?;
 %
 \begin{frame}{In Summary...}
 \begin{itemize}
-	\item \pollaroid{} removes the disconnect between a representative and the voters of their district
+	\item \pollaroid removes the disconnect between a representative and the voters of their district
 	\item The aim is to promote clarity of viewpoint and popular opinion on a district-to-district basis
 	\item Please go to our site and respond to some polls!
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Questions?}
-The \pollaroid{} Team:
+The \pollaroid Team:
 \begin{itemize}
 	\item Team Leader: Harlan Haskins
 	\item Design Engineer: Joshua Robbins
