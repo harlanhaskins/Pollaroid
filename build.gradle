@@ -59,7 +59,11 @@ task oneJar(type: OneJar) {
 // Configure the run task to start the Dropwizard service
 run {
     args 'server', './src/dist/config/pollaroid.yml'
+}
 
+task populate(dependsOn: classes, type: JavaExec) {
+    main = 'com.pollaroid.dummydata.DummyDataPopulator'
+    classpath(sourceSets.main.runtimeClasspath, sourceSets.main.compileClasspath)
 }
 
 task wrapper(type: Wrapper) {
