@@ -39,7 +39,7 @@ class Polls extends Component {
   }
 
   render() {
-    const headers = auth.isRepresentative() ? ['id', 'title', 'district', 'options', 'submitter'] : ['title'];
+    const headers = auth.isRepresentative() ? ['title', 'district'] : ['title'];
     return <div className='container'>
       <div className='starter-template'>
         <h1>Polls</h1>
