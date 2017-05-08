@@ -84,6 +84,18 @@ public class PollRecordDAO extends PollaroidDAO<PollRecord, Long> {
         return records;
     }
 
+    public List<PollRecord> getAllResponses() throws SQLException {
+        PreparedStatement stmt = prepareStatementFromFile("sql/get_all_poll_records.sql");
+        ResultSet r = stmt.executeQuery();
+
+        ArrayList<PollRecord> records = new ArrayList<>();
+        while (r.next()) {
+            records.add(createFromResultSet(r));
+        }
+        return records;
+    }
+
+
     public Optional<PollRecord> getVoterResponse(Voter voter, Poll poll) throws SQLException {
         PreparedStatement stmt = prepareStatementFromFile("sql/get_poll_record_by_voter_and_poll.sql");
         stmt.setLong(1, voter.getId());
