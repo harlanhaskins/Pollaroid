@@ -34,7 +34,7 @@ export default class TopPolls extends Component {
   render() {
     return <BarChart width={600} height={400} data={this.state.data}>
       <CartesianGrid stroke='#ccc' />
-      <XAxis dataKey='title' />
+      <XAxis dataKey='poll.title' />
       <YAxis />
       <Tooltip formatter={votesFormatter} />
       <Bar dataKey='Votes' fill='#8884d8' />
