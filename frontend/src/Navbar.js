@@ -26,7 +26,6 @@ export default ({ loggedIn }) => {
     <Navbar.Collapse>
       <Nav>
         <BootstrapLink to='/polls' label='Polls' />
-        <BootstrapLink to='/explore' label='Explore' />
         { loggedIn && auth.isRepresentative() && <BootstrapLink to='/voters' label='Voters' /> }
       </Nav>
       { loggedIn && <Nav pullRight>
