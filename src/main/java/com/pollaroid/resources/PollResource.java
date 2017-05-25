@@ -121,6 +121,19 @@ public class PollResource {
         }
     }
 
+
+    @GET
+    @Path("/{id}/results")
+    @RolesAllowed(AuthRoles.VOTER)
+    public List<PollRecord> allResponses(@PathParam("id") long pollID,@Context SecurityContext context) {
+        try {
+            Poll poll = pollDAO.getByIdOrThrow(pollID);
+            return pollRecordDAO.getResponses(poll);
+        } catch (SQLException e) {
+            throw new PollaroidError(e.getMessage());
+        }
+    }
+
     @GET
     @Path("/top")
     @RolesAllowed(AuthRoles.VOTER)
